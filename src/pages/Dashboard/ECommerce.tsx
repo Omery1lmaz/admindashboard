@@ -9,6 +9,30 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminDashBoardInf } from '../../store/productSlices.ts';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import { Typography } from '@mui/material';
+import BasicDatePicker from '../../components/MiniCalendar.tsx';
+import MiniCalendar from '../../components/MiniCalendar.tsx';
+import Datepicker from 'react-tailwindcss-datepicker';
+import { DateValueType } from 'react-tailwindcss-datepicker/dist/types/index';
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  height: 400,
+  bgcolor: 'background.paper',
+  borderRadius: '15px',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
 
 interface IFilterQuery {
   date?: {
@@ -24,8 +48,15 @@ const ECommerce = () => {
   const { adminDashBoard, isLoadingP } = useSelector((state) => state.product);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState<IFilterQuery>({});
+  const [open, setOpen] = useState(false);
   const handleOpenFilter = () => setFilterOpen(true);
   const handleCloseFilter = () => setFilterOpen(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const filterDateHandle = (e: any) => {
     console.log(e.target.value);
@@ -53,6 +84,15 @@ const ECommerce = () => {
         setProducts([...products, adminDashBoard.products[index]]);
       }
   }, [adminDashBoard]);
+  const [value, setValue] = useState<any>({
+    startDate: new Date(),
+    endDate: new Date().setMonth(11),
+  });
+
+  const handleValueChange = (newValue: any) => {
+    console.log('newValue:', newValue);
+    setValue(newValue);
+  };
 
   const getData = () => {
     // @ts-expect-error
@@ -60,10 +100,18 @@ const ECommerce = () => {
   };
   return (
     <DefaultLayout>
+      <div className="w-full p-2">
+        <button
+          className="flex items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+          onClick={handleOpen}
+        >
+          Open modal
+        </button>
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardOne
           title={'Total Cost'}
-          price={`${adminDashBoard.totalOrder} TL`}
+          price={`${adminDashBoard.totalCost} TL`}
           icon={<BanknotesIcon></BanknotesIcon>}
         />
         <CardOne
@@ -89,6 +137,53 @@ const ECommerce = () => {
           <TableOne />
         </div> */}
       </div>
+      <Modal
+        open={open}
+        onClose={handleCloseFilter}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Filter
+          </Typography>
+          <Typography
+            id="modal-modal-description"
+            className="d-flex flex-column justify-content-around w-100"
+            sx={{ mt: 2 }}
+          >
+            <div className="d-flex justify-content-around w-100">
+              <div className="d-flex">
+                <span>Start Date :</span>
+                <input type="date" onChange={filterDateHandle}></input>
+              </div>
+              <div className="d-flex">
+                <span className="mr-5">End Date :</span>
+                <input
+                  className="ml-5"
+                  type="date"
+                  onChange={filterDateEndHandle}
+                ></input>
+              </div>
+              <div>
+                {
+                  <Datepicker
+                    value={value}
+                    onChange={handleValueChange}
+                    showShortcuts={true}
+                    containerClassName={"bg-blue"}
+                    toggleClassName={"bg-blue"}
+                    inputClassName={"bg-blue"}
+
+                    />
+                }
+              </div>
+            </div>
+
+            <button onClick={getData}>Search</button>
+          </Typography>
+        </Box>
+      </Modal>
     </DefaultLayout>
   );
 };
