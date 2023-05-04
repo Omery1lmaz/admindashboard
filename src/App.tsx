@@ -22,6 +22,7 @@ import EditProduct from './pages/Admin/ProductPages/EditProduct';
 import EditWaiter from './pages/Admin/WaiterPages/EditWaiter';
 import OrderList from './pages/Admin/OrderPages/OrderList';
 import ProductList from './pages/Admin/ProductPages/ProductList';
+import CategoryList from './pages/Admin/CategoryPages/CategoryList';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -78,6 +79,11 @@ function App() {
           path="/product-list/:id"
           element={<GuardedRoute component={ProductList} />}
         />
+        <Route
+          path="/category-list"
+          element={<GuardedRoute component={CategoryList} />}
+        />
+
         <Route
           path="/product-list"
           element={<Navigate to={'/product-list/1'} />}

@@ -133,6 +133,7 @@ const ECommerce = () => {
           <TableOne />
         </div> */}
       </div>
+
       <Modal
         open={open}
         onClose={handleClose}

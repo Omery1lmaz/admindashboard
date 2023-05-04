@@ -101,17 +101,11 @@ const createTip = async ({ tip, id, seller }: any) => {
   return response.data;
 };
 
-const deleteCategoryById = async ({ id, user }: any) => {
+const deleteCategoryById = async ({ id }: any) => {
   console.log('İD Get ', id);
-  console.log('User İD Get Helper  ', user);
-
   const response: any = await axios.delete(
     `http://localhost:4000/api/categories/${id}`,
-    {
-      data: {
-        user: user,
-      },
-    }
+    { withCredentials: true }
   );
 
   return response.data;

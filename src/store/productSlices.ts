@@ -239,10 +239,10 @@ export const updateProductsImage = createAsyncThunk(
 
 export const deleteCategoryById = createAsyncThunk(
   '/deleteCategoryById',
-  async ({ id, user }: any, thunkAPI) => {
+  async ({ id }: any, thunkAPI) => {
     try {
-      console.log('id', id, user);
-      return await productService.deleteCategoryById({ id, user });
+      await productService.deleteCategoryById({ id });
+      return id;
     } catch (error: any) {
       const message =
         (error.response &&
@@ -260,7 +260,7 @@ export const deleteProductById = createAsyncThunk(
   async ({ id, user }: any, thunkAPI) => {
     try {
       console.log('id', id, user);
-      const response =  await productService.deleteProductById({ id, user });
+      const response = await productService.deleteProductById({ id, user });
       return id;
     } catch (error: any) {
       const message =
@@ -523,7 +523,6 @@ interface InitialState {
   promotions: any[];
 }
 
-
 const initialState: InitialState = {
   categories: [],
   category: {},
@@ -663,7 +662,7 @@ const productSlice = createSlice({
         state.messageP = action.payload as any;
       })
       .addCase(updateOrderStatus.pending, (state, action) => {
-        state.isLoadingP = true;
+        state.isLoadingP = false;
       })
       .addCase(getProduct.fulfilled, (state, action) => {
         state.product = action.payload;
@@ -733,7 +732,10 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(deleteCategoryById.fulfilled, (state, action) => {
-        state.sellerCategories = action.payload;
+        state.sellerCategories = state.sellerCategories.filter(
+          (v: any) => v._id !== action.payload
+        );
+        // state.sellerCategories = action.payload;
         state.isLoadingP = false;
       })
       .addCase(deleteCategoryById.rejected, (state, action) => {
@@ -746,7 +748,9 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(deleteProductById.fulfilled, (state, action) => {
-        const newList = state.sellerProducts?.filter((p: any) => p._id != action.payload)
+        const newList = state.sellerProducts?.filter(
+          (p: any) => p._id != action.payload
+        );
         console.log(newList.length);
         console.log(state.sellerProducts.length);
         state.sellerProducts = newList;

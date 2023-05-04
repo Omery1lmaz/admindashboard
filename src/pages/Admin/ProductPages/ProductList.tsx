@@ -251,6 +251,39 @@ const ProductList = () => {
           </button>
         </div>
       </div>
+      <div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <div className="bg-gray-800 absolute left-2/4 top-2/4 h-32 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
+            <h3 className="text-lg font-medium">Change Order Status</h3>
+            <hr className="my-3"></hr>
+            <div className="flex items-center justify-evenly gap-1">
+              <button
+                onClick={() => {
+                  deleteProduct(deleteProductId);
+                  handleClose();
+                }}
+                className="!linear bg-yellow-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center  justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
+              >
+                <span className="text-sm font-medium">Yes</span>
+              </button>
+              <button
+                onClick={() => {
+                  handleClose();
+                }}
+                className="!linear bg-red-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
+              >
+                <span className="text-sm font-medium">No</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+
       <Modal
         open={open}
         onClose={handleClose}

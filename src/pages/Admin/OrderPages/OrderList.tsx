@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import {
   getOrderBySeller,
   getOrderBySellerWithLimit,
+  updateOrderStatus,
 } from '../../../store/productSlices';
 import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/joy/CircularProgress';
@@ -100,7 +101,6 @@ const OrderList = () => {
 
   useEffect(() => {
     getOrders();
-    console.log(limit, 'limit active');
   }, [limit]);
   const handleupdateStatusOrder = (status: any) => {
     if (selectedOrder) {
@@ -108,9 +108,14 @@ const OrderList = () => {
         // @ts-expect-error
         (item: any, index: number) => item._id === selectedOrder?._id
       );
+      console.log(index);
       let copyOrders = [...orders];
       let copyV = orders[index];
       copyV = { ...copyV, isReady: status };
+      console.log(copyV);
+      copyOrders[index] = copyV;
+
+      console.log(copyOrders[index], 'copy order');
 
       orders = [...copyOrders];
       setOrders();
@@ -183,7 +188,7 @@ const OrderList = () => {
             </thead>
             <tbody>
               {!isLoadingP &&
-                vOrders?.map((order: any) => {
+                vOrders?.map((order: any, index: number) => {
                   let date = new Date(order.date);
 
                   let day = date.getDate(); // gün
@@ -207,7 +212,10 @@ const OrderList = () => {
 
                   return (
                     <tr onClick={() => setSelectedOrder(order)}>
-                      <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                      <td
+                        key={index}
+                        className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11"
+                      >
                         <h5 className="font-medium text-black dark:text-white">
                           {time}
                         </h5>
@@ -235,7 +243,7 @@ const OrderList = () => {
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <button
                           onClick={() => {
-                            handleOpenODetailModal();
+                            handleOpen();
                           }}
                           className="flex items-center justify-center  rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                         >
@@ -285,7 +293,7 @@ const OrderList = () => {
         {/* Order Detail Modal */}
         <Modal
           open={openOrderDetailModal}
-          onClose={handleClose}
+          onClose={handleCloseODetailModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -357,6 +365,72 @@ const OrderList = () => {
             </div>
           </div>
         </Modal>
+        <div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div className="bg-gray-800 absolute left-2/4 top-2/4 h-32 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
+              <h3 className="text-lg font-medium">Change Order Status</h3>
+              <hr className="my-3"></hr>
+              <div className="flex items-center justify-evenly gap-1">
+                <button
+                  onClick={() => {
+                    dispatch(
+                      // @ts-expect-error
+                      updateOrderStatus({
+                        // @ts-expect-error
+                        id: selectedOrder._id,
+                        status: 'Not Started',
+                      })
+                    );
+                    handleupdateStatusOrder('Not Started');
+                    handleClose();
+                  }}
+                  className="!linear bg-green-600 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center  justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
+                >
+                  <span className="text-sm font-medium">Not Started</span>
+                </button>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      // @ts-expect-error
+                      updateOrderStatus({
+                        // @ts-expect-error
+                        id: selectedOrder?._id,
+                        status: 'InProgress',
+                      })
+                    );
+                    handleupdateStatusOrder('InProgress');
+                    handleClose();
+                  }}
+                  className="!linear bg-yellow-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center  justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
+                >
+                  <span className="text-sm font-medium">In Progress</span>
+                </button>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      // @ts-expect-error
+                      updateOrderStatus({
+                        // @ts-expect-error
+                        id: selectedOrder._id,
+                        status: 'Ready',
+                      })
+                    );
+                    handleupdateStatusOrder('Ready');
+                    handleClose();
+                  }}
+                  className="!linear bg-red-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
+                >
+                  <span className="text-sm font-medium">Ready</span>
+                </button>
+              </div>
+            </div>
+          </Modal>
+        </div>
         {/* Order Detail Modal End */}
       </div>
       <Modal
