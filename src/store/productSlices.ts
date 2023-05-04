@@ -260,7 +260,8 @@ export const deleteProductById = createAsyncThunk(
   async ({ id, user }: any, thunkAPI) => {
     try {
       console.log('id', id, user);
-      return await productService.deleteProductById({ id, user });
+      const response =  await productService.deleteProductById({ id, user });
+      return id;
     } catch (error: any) {
       const message =
         (error.response &&
@@ -522,6 +523,7 @@ interface InitialState {
   promotions: any[];
 }
 
+
 const initialState: InitialState = {
   categories: [],
   category: {},
@@ -600,7 +602,6 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(getCategoriesBySellerId.fulfilled, (state, action) => {
-        console.log(action.payload, 'seller categories');
         state.isLoadingP = false;
         state.sellerCategories = action.payload;
       })
@@ -745,7 +746,10 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(deleteProductById.fulfilled, (state, action) => {
-        state.products = action.payload;
+        const newList = state.sellerProducts?.filter((p: any) => p._id != action.payload)
+        console.log(newList.length);
+        console.log(state.sellerProducts.length);
+        state.sellerProducts = newList;
         state.isLoadingP = false;
       })
       .addCase(deleteProductById.rejected, (state, action) => {

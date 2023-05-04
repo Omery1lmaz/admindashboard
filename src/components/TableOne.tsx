@@ -13,7 +13,7 @@ const DashboardProductsTable = () => {
   }, [adminDashBoard?.products]);
 
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+    <div className="min-h-[280px] rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="flex w-full cursor-pointer items-center justify-between">
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
           Products
@@ -43,6 +43,11 @@ const DashboardProductsTable = () => {
         {!newProducts && (
           <div className="flex h-[150px] items-center justify-center xl:p-5">
             <CircularProgress color="info" size="sm" variant="plain" />
+          </div>
+        )}
+        {adminDashBoard?.products?.length === 0 && !isLoadingP && (
+          <div className="flex h-[150px] items-center justify-center xl:p-5">
+            <h3 className="text-lg font-semibold">No Product</h3>
           </div>
         )}
         {newProducts?.map((product: any, index: number) => {
@@ -81,7 +86,7 @@ const DashboardCategoriesTable = () => {
   }, [adminDashBoard?.categories]);
 
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+    <div className="min-h-[280px] rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="flex w-full cursor-pointer items-center justify-between">
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
           Categories
@@ -96,7 +101,7 @@ const DashboardCategoriesTable = () => {
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
           <div className=" p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Category Name
+              Category Name1
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
@@ -113,6 +118,12 @@ const DashboardCategoriesTable = () => {
             <CircularProgress color="info" size="sm" variant="plain" />
           </div>
         )}
+        {adminDashBoard?.categories?.length === 0 && !isLoadingP && (
+          <div className="flex h-[150px] items-center justify-center xl:p-5">
+            <h3 className="text-lg font-semibold">No Category</h3>
+          </div>
+        )}
+
         {newCategories?.map((category: any, index: number) => {
           return (
             <div
@@ -140,4 +151,71 @@ const DashboardCategoriesTable = () => {
   );
 };
 
-export { DashboardProductsTable, DashboardCategoriesTable };
+const DashboardWaitersTable = () => {
+  // @ts-expect-error
+  const { waiters, isLoadingW } = useSelector((state) => state.waiter);
+  const [newWaiters, setNewWaiters] = useState<[]>();
+  useEffect(() => {
+    console.log(waiters);
+    waiters && setNewWaiters(waiters?.slice(0, 2));
+    console.log(newWaiters, 'new waiters');
+  }, [waiters]);
+
+  return (
+    <div className="min-h-[280px] rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <div className="flex w-full cursor-pointer items-center justify-between">
+        <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
+          Waiters
+        </h4>
+        <div className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	">
+          <span className="text-sm font-medium">view all</span>
+          <ArrowRightIcon width={15} />
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-1">
+          <div className=" p-2.5 xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Waiter Name
+            </h5>
+          </div>
+        </div>
+        {!newWaiters && !isLoadingW && (
+          <div className="flex h-[150px] items-center justify-center xl:p-5">
+            <CircularProgress color="info" size="sm" variant="plain" />
+          </div>
+        )}
+        {waiters?.length === 0 && !isLoadingW && (
+          <div className="flex h-[150px] items-center justify-center xl:p-5">
+            <h3 className="text-lg font-semibold">No Waiter</h3>
+            <button className="flex items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+              Add Waiter
+            </button>
+          </div>
+        )}
+
+        {newWaiters?.map((waiter: any, index: number) => {
+          return (
+            <div
+              key={index}
+              className="grid grid-cols-3 border-b border-stroke pb-3 dark:border-strokedark sm:grid-cols-1"
+            >
+              <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                <p className="hidden text-black dark:text-white sm:block">
+                  {waiter.name}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export {
+  DashboardProductsTable,
+  DashboardCategoriesTable,
+  DashboardWaitersTable,
+};

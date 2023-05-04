@@ -3,21 +3,17 @@ import CardOne from '../../components/CardOne.tsx';
 import {
   DashboardCategoriesTable,
   DashboardProductsTable,
+  DashboardWaitersTable,
 } from '../../components/TableOne.tsx';
 import DefaultLayout from '../../layout/DefaultLayout.tsx';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminDashBoardInf } from '../../store/productSlices.ts';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
-import BasicDatePicker from '../../components/MiniCalendar.tsx';
-import MiniCalendar from '../../components/MiniCalendar.tsx';
-import Datepicker from 'react-tailwindcss-datepicker';
-import { DateValueType } from 'react-tailwindcss-datepicker/dist/types/index';
+import { getWaiters } from '../../store/waiterSlice.ts';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -70,11 +66,9 @@ const ECommerce = () => {
   };
   useEffect(() => {
     getData();
-    console.log(adminDashBoard.products);
+    // @ts-expect-error
+    dispatch(getWaiters());
   }, []);
-  useEffect(() => {
-    console.log(adminDashBoard.products);
-  }, [adminDashBoard]);
   let counter = 0;
   const [products, setProducts] = useState<any[]>([]);
   useEffect(() => {
@@ -125,13 +119,15 @@ const ECommerce = () => {
           icon={<BanknotesIcon></BanknotesIcon>}
         />
       </div>
-
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <div className="col-span-12 xl:col-span-6">
-          {adminDashBoard.products && <DashboardProductsTable />}
+          {<DashboardProductsTable />}
         </div>
         <div className="col-span-12 xl:col-span-6">
-          {adminDashBoard.products && <DashboardCategoriesTable />}
+          {<DashboardCategoriesTable />}
+        </div>
+        <div className="col-span-12 xl:col-span-6">
+          {<DashboardWaitersTable />}
         </div>
         {/* <div className="col-span-12 xl:col-span-6">
           <TableOne />
@@ -139,49 +135,39 @@ const ECommerce = () => {
       </div>
       <Modal
         open={open}
-        onClose={handleCloseFilter}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
+            {/* <h2 className="text-lg font-medium">Filter</h2> */}
             Filter
           </Typography>
-          <Typography
-            id="modal-modal-description"
-            className="d-flex flex-column justify-content-around w-100"
-            sx={{ mt: 2 }}
-          >
-            <div className="d-flex justify-content-around w-100">
-              <div className="d-flex">
-                <span>Start Date :</span>
-                <input type="date" onChange={filterDateHandle}></input>
+          <div className="d-flex flex-column justify-content-around w-100">
+            <>
+              <div className="d-flex justify-content-around w-100">
+                <div className="d-flex">
+                  <span>Start Date :</span>
+                  <input type="date" onChange={filterDateHandle}></input>
+                </div>
+                <div className="d-flex">
+                  <span className="mr-5">End Date :</span>
+                  <input
+                    className="ml-5"
+                    type="date"
+                    onChange={filterDateEndHandle}
+                  ></input>
+                </div>
               </div>
-              <div className="d-flex">
-                <span className="mr-5">End Date :</span>
-                <input
-                  className="ml-5"
-                  type="date"
-                  onChange={filterDateEndHandle}
-                ></input>
-              </div>
-              <div>
-                {
-                  <Datepicker
-                    value={value}
-                    onChange={handleValueChange}
-                    showShortcuts={true}
-                    containerClassName={"bg-blue"}
-                    toggleClassName={"bg-blue"}
-                    inputClassName={"bg-blue"}
-
-                    />
-                }
-              </div>
-            </div>
-
-            <button onClick={getData}>Search</button>
-          </Typography>
+            </>
+            <button
+              className="flex items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+              onClick={getData}
+            >
+              Search
+            </button>
+          </div>
         </Box>
       </Modal>
     </DefaultLayout>

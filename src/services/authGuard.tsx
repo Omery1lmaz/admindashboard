@@ -10,7 +10,6 @@ const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
   useEffect(() => {}, [user]);
   let sayac = 0;
   useEffect(() => {
-    console.log(token);
     if (user) {
       // @ts-ignore
       dispatch(GetUserDetails());
