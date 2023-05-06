@@ -97,7 +97,7 @@ export const deleteWaiter = createAsyncThunk(
   async ({ id }: any, thunkAPI) => {
     try {
       const v = await waiterService.deleteWaiterHelper(id);
-      return v;
+      return id;
     } catch (error: any) {
       const message =
         (error.response &&
@@ -139,6 +139,23 @@ const waiterSlice = createSlice({
         state.isLoadingW = false;
       })
       .addCase(getWaiter.pending, (state, action) => {
+        state.isLoadingW = true;
+      })
+      // Delete waiter By ID
+      .addCase(deleteWaiter.fulfilled, (state, action) => {
+        state.isLoadingW = false;
+        state.waiters = state.waiters.filter(
+          // @ts-expect-error
+          (waiter) => waiter._id !== action.payload
+        );
+        // state.waiter = action.payload;
+      })
+      .addCase(deleteWaiter.rejected, (state, action) => {
+        state.isErrorW = true;
+        state.isSuccessW = false;
+        state.isLoadingW = false;
+      })
+      .addCase(deleteWaiter.pending, (state, action) => {
         state.isLoadingW = true;
       })
       // Get Waiters By Seller

@@ -23,6 +23,9 @@ import EditWaiter from './pages/Admin/WaiterPages/EditWaiter';
 import OrderList from './pages/Admin/OrderPages/OrderList';
 import ProductList from './pages/Admin/ProductPages/ProductList';
 import CategoryList from './pages/Admin/CategoryPages/CategoryList';
+import WaiterList from './pages/Admin/WaiterPages/WaiterList';
+import CategoryCostList from './pages/Admin/CostList/CategoryCostList';
+import ProductCostList from './pages/Admin/CostList/ProductCostList';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,17 +62,29 @@ function App() {
           element={<GuardedRoute component={AddWaiter} />}
         />
         <Route
-          path="/edit-category"
+          path="/edit-category/:id"
           element={<GuardedRoute component={EditCategory} />}
         />
+        <Route
+          path="/edit-category"
+          element={<Navigate to={'/edit-category/6453bbc9a10aca4239b45a0e'} />}
+        />
+
         <Route
           path="/edit-product"
           element={<GuardedRoute component={EditProduct} />}
         />
         <Route
-          path="/edit-waiter"
+          path="/edit-waiter/:id"
           element={<GuardedRoute component={EditWaiter} />}
         />
+        <Route
+          path="/edit-waiter"
+          element={<Navigate to={'/edit-waiter/643613b2c03fd3c3ea464c88'} />}
+        />
+        <Route path="/category-cost-list" element={<CategoryCostList />} />
+        <Route path="/product-cost-list" element={<ProductCostList />} />
+
         <Route
           path="/order-list/:id"
           element={<GuardedRoute component={OrderList} />}
@@ -83,6 +98,10 @@ function App() {
           path="/category-list"
           element={<GuardedRoute component={CategoryList} />}
         />
+        <Route
+          path="/waiter-list"
+          element={<GuardedRoute component={WaiterList} />}
+        />
 
         <Route
           path="/product-list"
@@ -94,7 +113,10 @@ function App() {
         <Route path="/forms/form-elements" element={<FormElements />} />
         <Route path="/forms/form-layout" element={<FormLayout />} />
         <Route path="/tables" element={<Tables />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/settings"
+          element={<GuardedRoute component={Settings} />}
+        />
         <Route path="/chart" element={<Chart />} />
         <Route path="/ui/alerts" element={<Alerts />} />
         <Route path="/ui/buttons" element={<Buttons />} />
