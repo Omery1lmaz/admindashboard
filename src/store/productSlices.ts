@@ -444,12 +444,11 @@ export const getProductsBySeller = createAsyncThunk(
 
 export const getProductsBySellerLimit = createAsyncThunk(
   '/getProductsBySellerLimit',
-  async ({ id, skip, limit }: any, thunkAPI) => {
+  async ({  skip, limit }: any, thunkAPI) => {
     console.log(skip, 'skip');
     const v = skip == 1 ? 0 : skip * 10 - 10;
     try {
       const res = await productService.getProductsBySellerWithLimit({
-        id,
         skip,
         limit,
       });

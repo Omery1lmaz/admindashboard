@@ -216,9 +216,10 @@ const getProductsBySeller = async (id: any) => {
   return response.data;
 };
 
-const getProductsBySellerWithLimit = async ({ id, skip, limit }: any) => {
+const getProductsBySellerWithLimit = async ({ skip, limit }: any) => {
   const response: any = await axios.get(
-    `http://localhost:4000/api/products/seller/limit/${id}/${limit}/${skip}`
+    `http://localhost:4000/api/products/seller/limit/${limit}/${skip}`,
+    { withCredentials: true }
   );
   return response.data;
 };

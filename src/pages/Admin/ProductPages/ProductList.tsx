@@ -52,27 +52,26 @@ const ProductList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const [deal, setDeal] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [deleteProductId, setDeleteProductId] = useState();
   const [limit, setLimit] = useState(10);
   const { page } = useParams();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   // @ts-expect-error
   const { user } = useSelector((state) => state.auth);
   // @ts-expect-error
   const { isLoadingP, sellerProducts } = useSelector((state) => state.product);
-  const deleteProduct = (id: any) => {
+  const deleteProduct = () => {
     // @ts-expect-error
-    dispatch(deleteProductById({ id, user }));
+    dispatch(deleteProductById({ id: deleteProductId, user }));
   };
   const getProducts = () => {
     const intActivePAge = activePage - 1;
     dispatch(
       // @ts-expect-error
       getProductsBySellerLimit({
-        id: user._id,
         skip: intActivePAge * limit,
         limit,
       })
@@ -147,7 +146,6 @@ const ProductList = () => {
 
         {!isLoadingP &&
           sellerProducts?.map((product: any, key: number) => {
-            console.log(product.variations.length == 0);
             return (
               <div
                 key={key}
@@ -211,7 +209,7 @@ const ProductList = () => {
                     <TrashIcon
                       className="cursor-pointer hover:scale-110"
                       width={16}
-                      onClick={(e: any) => {
+                      onClick={() => {
                         setDeleteProductId(product._id);
                         handleOpen();
                       }}
@@ -262,67 +260,34 @@ const ProductList = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <div className="bg-gray-800 absolute left-2/4 top-2/4 h-32 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
-            <h3 className="text-lg font-medium">Change Order Status</h3>
+          <div className="bg-gray-800 absolute left-2/4 top-2/4 h-36 w-1/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
+            <h3 className="text-lg font-medium">
+              Are You Sure to Delete Product
+            </h3>
             <hr className="my-3"></hr>
             <div className="flex items-center justify-evenly gap-1">
               <button
+                className="flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 px-5 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                 onClick={() => {
-                  deleteProduct(deleteProductId);
+                  deleteProduct();
                   handleClose();
                 }}
-                className="!linear bg-yellow-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center  justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
               >
-                <span className="text-sm font-medium">Yes</span>
+                Yes
               </button>
+
               <button
+                className="flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 px-5 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                 onClick={() => {
                   handleClose();
                 }}
-                className="!linear bg-red-500 text-brand-500 hover:bg-gray-100 active:bg-gray-200 z-[1] flex items-center justify-center rounded-lg p-2 px-4 !transition !duration-200  dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"
               >
-                <span className="text-sm font-medium">No</span>
+                No
               </button>
             </div>
           </div>
         </Modal>
       </div>
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Are u sure to delete product
-          </Typography>
-          <Typography
-            id="modal-modal-description"
-            className="d-flex"
-            sx={{ mt: 2 }}
-          >
-            <button
-              className="w-50"
-              onClick={() => {
-                deleteProduct(deleteProductId);
-                handleClose();
-              }}
-            >
-              Yes
-            </button>
-            <button
-              className="ml-2 w-50"
-              onClick={() => {
-                handleClose();
-              }}
-            >
-              No
-            </button>
-          </Typography>
-        </Box>
-      </Modal>
     </DefaultLayout>
   );
 };

@@ -157,6 +157,32 @@ export const VerifyEmailUser = createAsyncThunk(
   }
 );
 
+export const updatePassword = createAsyncThunk(
+  'updatePassword',
+  async (
+    { oldPassword, newPassword, newPasswordConfirm }: any,
+    thunkAPI: any
+  ) => {
+    try {
+      const v = await authService.updatePasswordHelper({
+        oldPassword,
+        newPassword,
+        newPasswordConfirm,
+      });
+      successNotification('Şifre Başarıyla güncellendi');
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const ResetPasswordLink = createAsyncThunk(
   'post/resetPasswordLink',
   async (email: any, thunkAPI: any) => {

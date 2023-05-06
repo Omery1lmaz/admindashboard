@@ -5,6 +5,7 @@ import DefaultLayout from '../../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import {
   getsellerInfo,
+  updatePassword,
   updateSellerImage,
   updateSellerProfile,
 } from '../../../store/authenticationSlices';
@@ -16,9 +17,6 @@ const Settings = () => {
   const dispatch = useDispatch();
   // @ts-expect-error
   const { sellerInfo, isLoading } = useSelector((state) => state.auth);
-  const [modalStatus, setModalStatus] = useState(false);
-  const handleModalStatusOpen = () => setModalStatus(true);
-  const handleModalStatusClose = () => setModalStatus(false);
   const [image, setImage] = useState<File>();
 
   const formData = new FormData();
@@ -36,17 +34,30 @@ const Settings = () => {
     dispatch(getsellerInfo());
   };
   const handleUpdateImage = () => {
-    console.log('handle imput');
     // @ts-expect-error
     dispatch(updateSellerImage({ formData }));
-    handleModalStatusClose();
   };
 
   const validate = Yup.object({
     Name: Yup.string().required('Name is required'),
     Address: Yup.string().required('Adress is required'),
     IsTakeAway: Yup.boolean(),
-    Waiters: Yup.array(),
+  });
+
+  const passwordValidate = Yup.object({
+    OldPassword: Yup.string()
+      .min(6, 'Eski Şifre min 6 karakter olmalıdır')
+      .max(15, 'Eski Şifre maksimum 15 karakter olmalıdır')
+      .required('Eski Şifre is required'),
+    Password: Yup.string()
+      .min(6, 'Şifre min 6 karakter olmalıdır')
+      .max(15, 'Şifre maksimum 15 karakter olmalıdır')
+      .required('Şifre is required'),
+    NewPassword: Yup.string()
+      .min(6, 'Şifre Doğrulama min 6 karakter olmalıdır')
+      .max(15, 'Şifre Doğrulama maksimum 15 karakter olmalıdır')
+      .required('Şifre Doğrulama is required')
+      .oneOf([Yup.ref('Password')], 'Yeni Şifre, Eski Şifre ile eşleşmiyor.'),
   });
 
   return (
@@ -259,6 +270,133 @@ const Settings = () => {
                       </button>
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-span-5 xl:col-span-3">
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">
+                  Reset Password
+                </h3>
+              </div>
+              <div className="min-h-[250px] p-7">
+                {sellerInfo && sellerInfo.name && !isLoading && (
+                  <Formik
+                    initialValues={{
+                      OldPassword: '',
+                      Password: '',
+                      NewPassword: '',
+                    }}
+                    validationSchema={passwordValidate}
+                    onSubmit={(values) => {
+                      console.log(values, 'values');
+                      const { OldPassword, Password, NewPassword } = values;
+                      dispatch(
+                        // @ts-expect-error
+                        updatePassword({
+                          oldPassword: OldPassword,
+                          newPassword: Password,
+                          newPasswordConfirm: NewPassword,
+                        })
+                      );
+                    }}
+                  >
+                    {(formik) => {
+                      return (
+                        <form onSubmit={formik.handleSubmit}>
+                          {formik.errors && (
+                            <span>
+                              {
+                                (formik.errors.NewPassword,
+                                formik.errors.OldPassword,
+                                formik.errors.Password)
+                              }
+                            </span>
+                          )}
+                          <div className="w-full ">
+                            <label
+                              className="mb-3 block text-sm font-medium text-black dark:text-white"
+                              htmlFor="fullName"
+                            >
+                              Eski Şifre
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-4.5 top-4">
+                                <UserIcon width={20} />
+                              </span>
+                              <input
+                                className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                id="OldPassword"
+                                name="OldPassword"
+                                type="password"
+                                required
+                                value={formik.values.OldPassword}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="mb-5.5">
+                            <label
+                              className="mb-3 block text-sm font-medium text-black dark:text-white"
+                              htmlFor="emailAddress"
+                            >
+                              Yeni Şifre
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-4.5 top-4">
+                                <MapIcon width={20} />
+                              </span>
+                              <input
+                                className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                id="Password"
+                                name="Password"
+                                type="password"
+                                required
+                                value={formik.values.Password}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                              />
+                            </div>
+                          </div>
+                          <div className="mb-5.5">
+                            <label
+                              className="mb-3 block text-sm font-medium text-black dark:text-white"
+                              htmlFor="emailAddress"
+                            >
+                              Yeni Şifre Doğrulama
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-4.5 top-4">
+                                <MapIcon width={20} />
+                              </span>
+                              <input
+                                className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                id="NewPassword"
+                                name="NewPassword"
+                                type="password"
+                                required
+                                value={formik.values.NewPassword}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end gap-4.5">
+                            <button
+                              className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                              type="submit"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </form>
+                      );
+                    }}
+                  </Formik>
                 )}
               </div>
             </div>

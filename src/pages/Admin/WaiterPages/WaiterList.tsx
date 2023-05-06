@@ -35,7 +35,6 @@ const WaiterList = () => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const gotoAddWaiterPage = () => navigate('/add-waiter');
 
   useEffect(() => {
     // @ts-expect-error
@@ -94,21 +93,14 @@ const WaiterList = () => {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                   >
-                    <Box sx={style}>
-                      <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h2"
-                      >
-                        Are u sure to delete product
-                      </Typography>
-                      <Typography
-                        id="modal-modal-description"
-                        className="d-flex"
-                        sx={{ mt: 2 }}
-                      >
+                    <div className="bg-gray-800 absolute left-2/4 top-2/4 h-36 w-1/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
+                      <h3 className="text-lg font-medium">
+                        Are You Sure to Delete Waiter
+                      </h3>
+                      <hr className="my-3"></hr>
+                      <div className="flex items-center justify-evenly gap-1">
                         <button
-                          className="w-50"
+                          className="flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 px-5 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                           onClick={() => {
                             handleDeleteWaiter();
                             handleClose();
@@ -116,16 +108,17 @@ const WaiterList = () => {
                         >
                           Yes
                         </button>
+
                         <button
-                          className="ml-2 w-50"
+                          className="flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 px-5 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                           onClick={() => {
                             handleClose();
                           }}
                         >
                           No
                         </button>
-                      </Typography>
-                    </Box>
+                      </div>
+                    </div>
                   </Modal>
                 </div>
               </div>
