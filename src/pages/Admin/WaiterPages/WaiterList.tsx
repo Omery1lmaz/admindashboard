@@ -77,6 +77,7 @@ const WaiterList = () => {
                     <PencilSquareIcon
                       className="cursor-pointer hover:scale-110"
                       width={16}
+                      onClick={() => navigate(`/edit-waiter/${waiter._id}`)}
                     />
                     <TrashIcon
                       className="cursor-pointer hover:scale-110"

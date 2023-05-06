@@ -5,5 +5,14 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   server: {
     port: 3000, // burada Vite'in çalıştığı port'u değiştirebilirsiniz
+    hmr: {
+      overlay: false,
+    },
   },
+  plugins: [
+    react({
+      // Add this line
+      include: '**/*.tsx',
+    }),
+  ],
 });

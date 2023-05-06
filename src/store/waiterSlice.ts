@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import waiterService from './helper/waiterHelper';
+import {
+  errorNotification,
+  successNotification,
+} from '../services/notificationHelper';
 // GET WAITER
 export const getWaiter = createAsyncThunk(
   '/getWaiter',
@@ -13,8 +17,7 @@ export const getWaiter = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      // return thunkAPI.rejectWithValue(message);
-      console.log(error);
+      errorNotification(error.response.data);
     }
   }
 );
@@ -27,8 +30,7 @@ export const getWaiters = createAsyncThunk('/getWaiters', async (thunkAPI) => {
       (error.response && error.response.data && error.response.data.message) ||
       error.message ||
       error.toString();
-    // return thunkAPI.rejectWithValue(message);
-    console.log(error);
+    errorNotification(error.response.data);
   }
 });
 
@@ -45,8 +47,7 @@ export const getWaitersBySellerId = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      // return thunkAPI.rejectWithValue(message);
-      console.log(error);
+      errorNotification(error.response.data);
     }
   }
 );
@@ -58,6 +59,7 @@ export const addWaiter = createAsyncThunk(
     console.log(waiter);
     try {
       const v = await waiterService.addWaiterHelper(waiter);
+      successNotification('Garson Başarıyla Güncellendi');
       return v;
     } catch (error: any) {
       const message =
@@ -66,8 +68,7 @@ export const addWaiter = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      // return thunkAPI.rejectWithValue(message);
-      console.log(error);
+      errorNotification(error.response.data);
     }
   }
 );
@@ -78,6 +79,7 @@ export const updateWaiter = createAsyncThunk(
   async ({ waiter }: any, thunkAPI) => {
     try {
       const v: any = await waiterService.updateWaiterHelper(waiter);
+      successNotification('Garson Başarıyla Güncellendi');
       return v;
     } catch (error: any) {
       const message =
@@ -86,7 +88,7 @@ export const updateWaiter = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      // return thunkAPI.rejectWithValue(message);
+      errorNotification(error.response.data);
       console.log(error);
     }
   }
@@ -97,6 +99,7 @@ export const deleteWaiter = createAsyncThunk(
   async ({ id }: any, thunkAPI) => {
     try {
       const v = await waiterService.deleteWaiterHelper(id);
+      successNotification('Garson Başarıyla Silindi');
       return id;
     } catch (error: any) {
       const message =
@@ -105,7 +108,7 @@ export const deleteWaiter = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      // return thunkAPI.rejectWithValue(message);
+      errorNotification(error.response.data);
       console.log(error);
     }
   }

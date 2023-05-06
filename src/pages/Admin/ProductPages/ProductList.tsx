@@ -164,15 +164,19 @@ const ProductList = () => {
                   </div>
                 </div>
                 <div className="col-span-2 hidden max-w-[100px] items-center sm:flex">
-                  <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent p-2 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input">
-                    {product.categories.map((item: any) => {
-                      return (
-                        <option key={item._id} value={item.name}>
-                          {item.name}
-                        </option>
-                      );
-                    })}
-                  </select>
+                  {product.categories == 0 ? (
+                    <span>No Category</span>
+                  ) : (
+                    <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent p-2 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input">
+                      {product.categories.map((item: any) => {
+                        return (
+                          <option key={item._id} value={item.name}>
+                            {item.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  )}
                 </div>
                 <div className="col-span-1 flex items-center">
                   <div className="col-span-2 hidden max-w-[100px] items-center sm:flex">

@@ -32,7 +32,6 @@ const getAdminDashboardInf = async ({ query }: any) => {
 };
 
 const UpdateOrderStatus = async ({ id, status }: any) => {
-  console.log(status);
   const response = await axios.put(
     `http://localhost:4000/api/orders/order/${id}`,
     { status },
@@ -64,27 +63,22 @@ const createOrder = async ({
   productsQnty,
   tip,
 }: any) => {
-  const response: any = axios
-    .post(
-      'http://localhost:4000/api/orders/order',
-      {
-        isTakeAway,
-        totalPrice,
-        name,
-        products,
-        user,
-        seller,
-        shippingAddress,
-        productsQnty,
-        orderMessage,
-        tip,
-      },
-      { withCredentials: true }
-    )
-    .then((v) => {
-      console.log(v, 'v');
-    });
-  console.log(response.data, 'response dataw');
+  const response: any = axios.post(
+    'http://localhost:4000/api/orders/order',
+    {
+      isTakeAway,
+      totalPrice,
+      name,
+      products,
+      user,
+      seller,
+      shippingAddress,
+      productsQnty,
+      orderMessage,
+      tip,
+    },
+    { withCredentials: true }
+  );
 
   return response.data;
 };
@@ -102,7 +96,6 @@ const createTip = async ({ tip, id, seller }: any) => {
 };
 
 const deleteCategoryById = async ({ id }: any) => {
-  console.log('İD Get ', id);
   const response: any = await axios.delete(
     `http://localhost:4000/api/categories/${id}`,
     { withCredentials: true }
@@ -112,8 +105,6 @@ const deleteCategoryById = async ({ id }: any) => {
 };
 
 const getProduct = async ({ id }: any) => {
-  console.log('İD Get ', id);
-
   const response: any = await axios.get(
     `http://localhost:4000/api/products/${id}`
   );
@@ -166,7 +157,6 @@ const getPromotionsBySeller = async () => {
 };
 
 const addCategoriesHelper = async (category: any) => {
-  console.log(category);
   const response: any = await axios.post(
     'http://localhost:4000/api/categories/add-categories',
     category,
@@ -188,10 +178,6 @@ const updateCategory = async ({ category, id }: any) => {
 };
 
 const addProduct = async ({ product, formData }: any) => {
-  for (var key of formData.entries()) {
-    console.log(JSON.stringify(key[0]) + ', ' + JSON.stringify(key[1]));
-  }
-
   const response: any = await axios.post(
     'http://localhost:4000/api/products/',
     formData,
@@ -204,7 +190,6 @@ const addProduct = async ({ product, formData }: any) => {
 // @Update Product
 // @Private
 const updateProduct = async ({ product, productId }: any) => {
-  console.log('update product helper', product);
   const response: any = await axios.post(
     `http://localhost:4000/api/products/${productId}`,
     product,
@@ -219,7 +204,6 @@ const getProductsByIdHelper = async (id: any) => {
   const response: any = await axios.get(
     `http://localhost:4000/api/products/${id}`
   );
-  console.log(response.data);
   return response.data;
 };
 
@@ -233,7 +217,6 @@ const getProductsBySeller = async (id: any) => {
 };
 
 const getProductsBySellerWithLimit = async ({ id, skip, limit }: any) => {
-  console.log(skip, 'skip 1');
   const response: any = await axios.get(
     `http://localhost:4000/api/products/seller/limit/${id}/${limit}/${skip}`
   );
@@ -241,8 +224,6 @@ const getProductsBySellerWithLimit = async ({ id, skip, limit }: any) => {
 };
 
 const getOrderBySellerWithLimit = async ({ skip, limit, query }: any) => {
-  console.log(query, 'query helper');
-  console.log(limit, 'limit helper');
   const response: any = await axios.put(
     `http://localhost:4000/api/orders/order/seller/limit/${limit}/${skip}`,
     { query },
@@ -259,9 +240,6 @@ const getCatsHelper = async () => {
   return response.data;
 };
 const deleteProductById = async ({ id, user }: any) => {
-  console.log('İD Get ', id);
-  console.log('User İD Get Helper  ', user);
-
   const response = await axios.delete(
     `http://localhost:4000/api/products/${id}`,
     {

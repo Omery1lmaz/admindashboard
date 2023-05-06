@@ -3,6 +3,10 @@ import axios from 'axios';
 import authService from './helper/authHelper';
 import productService from './helper/productHelper';
 import { useNavigate } from 'react-router-dom';
+import {
+  errorNotification,
+  successNotification,
+} from '../services/notificationHelper';
 export const getCategories = createAsyncThunk(
   '/getCategories',
   async (thunkAPI: any) => {
@@ -32,6 +36,7 @@ export const getAdminDashBoardInf = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -41,6 +46,7 @@ export const updateOrderStatus = createAsyncThunk(
   async ({ id, status }: any, thunkAPI) => {
     try {
       const response = await productService.UpdateOrderStatus({ id, status });
+      successNotification('Sipariş Durumu BAşarıyla Güncellendi');
       return response;
     } catch (error: any) {
       const message =
@@ -49,6 +55,7 @@ export const updateOrderStatus = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -84,8 +91,7 @@ export const createOrder = createAsyncThunk(
         isTakeAway,
         tip,
       });
-      console.log('test');
-      console.log(response, 'order data');
+      successNotification('Order Başarıyla Oluştu');
       return {
         response,
         status: '200',
@@ -97,6 +103,7 @@ export const createOrder = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -111,7 +118,7 @@ export const createTip = createAsyncThunk(
         id,
         seller,
       });
-      console.log('test');
+      errorNotification('Tip başarıyla oluşturuldu');
       return {
         response,
         status: '200',
@@ -123,6 +130,7 @@ export const createTip = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -140,6 +148,7 @@ export const getOrderBySeller = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -158,6 +167,7 @@ export const deleteOrder = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -176,6 +186,7 @@ export const getOrderById = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -193,6 +204,7 @@ export const getCategoryById = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -211,6 +223,7 @@ export const getProduct = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -224,6 +237,7 @@ export const updateProductsImage = createAsyncThunk(
         id,
         formData,
       });
+      successNotification('Ürün Resmi Başarıyla Güncellendi');
       return response;
     } catch (error: any) {
       const message =
@@ -232,6 +246,7 @@ export const updateProductsImage = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -242,6 +257,7 @@ export const deleteCategoryById = createAsyncThunk(
   async ({ id }: any, thunkAPI) => {
     try {
       await productService.deleteCategoryById({ id });
+      successNotification('Category Başarıyla Silindi');
       return id;
     } catch (error: any) {
       const message =
@@ -250,6 +266,7 @@ export const deleteCategoryById = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -261,6 +278,7 @@ export const deleteProductById = createAsyncThunk(
     try {
       console.log('id', id, user);
       const response = await productService.deleteProductById({ id, user });
+      successNotification('Product Başarıyla Silindi');
       return id;
     } catch (error: any) {
       const message =
@@ -269,6 +287,7 @@ export const deleteProductById = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -350,7 +369,8 @@ export const addCategories = createAsyncThunk(
   async (category, thunkAPI) => {
     try {
       console.log(category);
-      return await productService.addCategoriesHelper(category);
+      const v = await productService.addCategoriesHelper(category);
+      successNotification('Gategory Başarıyla Güncellendi');
     } catch (error: any) {
       const message =
         (error.response &&
@@ -358,6 +378,7 @@ export const addCategories = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -368,6 +389,7 @@ export const updateCategory = createAsyncThunk(
   async ({ category, id }: any, thunkAPI) => {
     try {
       const res = await productService.updateCategory({ category, id });
+      successNotification('Category Başarıyla Güncellendi');
       return res;
     } catch (error: any) {
       const message =
@@ -376,6 +398,7 @@ export const updateCategory = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -395,6 +418,7 @@ export const getProductsById = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -437,6 +461,7 @@ export const getProductsBySellerLimit = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -461,6 +486,7 @@ export const getOrderBySellerWithLimit = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -474,7 +500,8 @@ export const addProduct = createAsyncThunk(
         console.log(JSON.stringify(key[0]) + ', ' + JSON.stringify(key[1]));
       }
 
-      return await productService.addProduct({ product, formData });
+      const v = await productService.addProduct({ product, formData });
+      successNotification('Product başarıyla güncellendi');
     } catch (error: any) {
       const message =
         (error.response &&
@@ -482,6 +509,7 @@ export const addProduct = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -495,6 +523,7 @@ export const updateProduct = createAsyncThunk(
         product,
         productId,
       });
+      successNotification('Product başarıyla güncellendi');
     } catch (error: any) {
       const message =
         (error.response &&
@@ -502,6 +531,7 @@ export const updateProduct = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      error(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -795,7 +825,7 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(addCategories.fulfilled, (state, action) => {
-        state.categories = action.payload;
+        state.categories = action.payload as any;
         state.isLoadingP = false;
         state.isSuccessP = true;
       })

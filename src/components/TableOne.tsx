@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { smallCircularProgressBar } from './progressBar/circularProgressBar';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 const DashboardProductsTable = () => {
   // @ts-expect-error
   const { adminDashBoard, isLoadingP } = useSelector((state) => state.product);
   const [newProducts, setNewProducts] = useState<[]>();
+  const navigate = useNavigate();
   useEffect(() => {
     adminDashBoard?.products &&
       setNewProducts(adminDashBoard.products?.slice(0, 2));
@@ -18,7 +20,10 @@ const DashboardProductsTable = () => {
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
           Products
         </h4>
-        <div className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	">
+        <div
+          className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	"
+          onClick={() => navigate('/product-list/1')}
+        >
           <span className="text-sm font-medium">view all</span>
           <ArrowRightIcon width={15} />
         </div>
@@ -84,6 +89,7 @@ const DashboardCategoriesTable = () => {
     adminDashBoard?.categories &&
       setNewCategories(adminDashBoard.categories?.slice(0, 2));
   }, [adminDashBoard?.categories]);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-[280px] rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -91,7 +97,10 @@ const DashboardCategoriesTable = () => {
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
           Categories
         </h4>
-        <div className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	">
+        <div
+          className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	"
+          onClick={() => navigate('/category-list')}
+        >
           <span className="text-sm font-medium">view all</span>
           <ArrowRightIcon width={15} />
         </div>
@@ -101,7 +110,7 @@ const DashboardCategoriesTable = () => {
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
           <div className=" p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Category Name1
+              Category Name
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
@@ -160,6 +169,7 @@ const DashboardWaitersTable = () => {
     waiters && setNewWaiters(waiters?.slice(0, 2));
     console.log(newWaiters, 'new waiters');
   }, [waiters]);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-[280px] rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -167,7 +177,10 @@ const DashboardWaitersTable = () => {
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
           Waiters
         </h4>
-        <div className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	">
+        <div
+          className="mr-2 flex min-w-[100px] items-center	justify-end gap-1 hover:translate-x-0.5	"
+          onClick={() => navigate('/waiter-list')}
+        >
           <span className="text-sm font-medium">view all</span>
           <ArrowRightIcon width={15} />
         </div>

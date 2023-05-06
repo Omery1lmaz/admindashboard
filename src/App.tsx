@@ -4,15 +4,11 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
 import ECommerce from './pages/Dashboard/ECommerce';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
+import Profile from './pages/Admin/Profile/Profile';
 import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
 import GuardedRoute from './services/authGuard';
 import AddProduct from './pages/Admin/ProductPages/AddProduct';
 import AddCategory from './pages/Admin/CategoryPages/AddCategory';
@@ -24,8 +20,10 @@ import OrderList from './pages/Admin/OrderPages/OrderList';
 import ProductList from './pages/Admin/ProductPages/ProductList';
 import CategoryList from './pages/Admin/CategoryPages/CategoryList';
 import WaiterList from './pages/Admin/WaiterPages/WaiterList';
-import CategoryCostList from './pages/Admin/CostList/CategoryCostList';
-import ProductCostList from './pages/Admin/CostList/ProductCostList';
+import CategoryCostList from './pages/Admin/CostList/category/CategoryCostList';
+import ProductCostList from './pages/Admin/CostList/product/ProductCostList';
+import Buttons from './pages/UiElements/Buttons';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -47,8 +45,23 @@ function App() {
     <p className=" text-center text-danger">Failed to lead app</p>
   ) : (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+
       <Routes>
         <Route path="/" element={<GuardedRoute component={ECommerce} />} />
+        <Route path="/buttons" element={<GuardedRoute component={Buttons} />} />
+
         <Route
           path="/add-product"
           element={<GuardedRoute component={AddProduct} />}
@@ -82,8 +95,14 @@ function App() {
           path="/edit-waiter"
           element={<Navigate to={'/edit-waiter/643613b2c03fd3c3ea464c88'} />}
         />
-        <Route path="/category-cost-list" element={<CategoryCostList />} />
-        <Route path="/product-cost-list" element={<ProductCostList />} />
+        <Route
+          path="/category-cost-list"
+          element={<GuardedRoute component={CategoryCostList} />}
+        />
+        <Route
+          path="/product-cost-list"
+          element={<GuardedRoute component={ProductCostList} />}
+        />
 
         <Route
           path="/order-list/:id"
@@ -109,17 +128,10 @@ function App() {
         />
 
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<GuardedRoute component={Profile} />} />
         <Route path="/forms/form-elements" element={<FormElements />} />
         <Route path="/forms/form-layout" element={<FormLayout />} />
         <Route path="/tables" element={<Tables />} />
-        <Route
-          path="/settings"
-          element={<GuardedRoute component={Settings} />}
-        />
-        <Route path="/chart" element={<Chart />} />
-        <Route path="/ui/alerts" element={<Alerts />} />
-        <Route path="/ui/buttons" element={<Buttons />} />
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
       </Routes>

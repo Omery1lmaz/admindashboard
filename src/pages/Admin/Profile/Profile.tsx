@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
-import Breadcrumb from '../components/Breadcrumb';
+import Breadcrumb from '../../../components/Breadcrumb';
 import userThree from '../images/user/user-03.png';
-import DefaultLayout from '../layout/DefaultLayout';
+import DefaultLayout from '../../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import {
   getsellerInfo,
   updateSellerImage,
   updateSellerProfile,
-} from '../store/authenticationSlices';
+} from '../../../store/authenticationSlices';
 import * as Yup from 'yup';
 import { MapIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Formik } from 'formik';

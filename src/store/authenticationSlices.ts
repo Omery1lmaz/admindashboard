@@ -3,6 +3,10 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import authService from './helper/authHelper';
 import State from '../types/AuthSlice';
+import {
+  errorNotification,
+  successNotification,
+} from '../services/notificationHelper';
 
 const userString = localStorage.getItem('user');
 const user = userString !== null ? JSON.parse(userString) : null;
@@ -23,7 +27,7 @@ export const loginUser = createAsyncThunk(
           isAdmin: response.isAdmin,
         })
       );
-      console.log(response, 'reesponse');
+      successNotification('Giriş Başarılı');
       return response;
     } catch (error: any) {
       const message =
@@ -32,6 +36,7 @@ export const loginUser = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -79,6 +84,7 @@ export const updateSellerProfile = createAsyncThunk(
   async (profile: any, thunkAPI: any) => {
     try {
       const response = await authService.updateUserProfileHelper(profile);
+      successNotification('Profil başarıyla güncellendi');
       return response;
     } catch (error: any) {
       const message =
@@ -87,6 +93,7 @@ export const updateSellerProfile = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      successNotification(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -98,6 +105,7 @@ export const updateSellerImage = createAsyncThunk(
       const response = await authService.updateUserImageHelper({
         formData,
       });
+      successNotification('Resim başarıyla güncellendi');
       return response;
     } catch (error: any) {
       const message =
@@ -106,6 +114,7 @@ export const updateSellerImage = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -116,6 +125,7 @@ export const RegisterUser = createAsyncThunk(
   async (user: any, thunkAPI: any) => {
     try {
       const response = await authService.register(user);
+      successNotification(response.data);
       return response;
     } catch (error: any) {
       const message =
@@ -124,6 +134,7 @@ export const RegisterUser = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      errorNotification(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -151,7 +162,9 @@ export const ResetPasswordLink = createAsyncThunk(
   async (email: any, thunkAPI: any) => {
     try {
       console.log(email);
-      return await authService.resetPasswordLink(email);
+      const v = await authService.resetPasswordLink(email);
+      successNotification('Emailinizi kontrol ediniz');
+      return v;
     } catch (error: any) {
       const message =
         (error.response &&
@@ -231,7 +244,12 @@ export const initialState: State = {
 const authSlice = createSlice({
   name: 'users',
   initialState,
-  reducers: {},
+  reducers: {
+    deleteUser(state: State) {
+      state.user = null;
+      state.userDetail = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -280,6 +298,7 @@ const authSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(GetUserDetails.rejected, (state, action) => {
+        console.log('gety user details rejected');
         state.isError = true;
         state.isSuccess = false;
         state.user = null;
@@ -287,7 +306,6 @@ const authSlice = createSlice({
         state.message = action.payload as string;
         Cookies.remove('connect.sid');
         localStorage.removeItem('user');
-        state.user = null;
         state.userDetail = null;
       })
       .addCase(GetUserDetails.pending, (state, action) => {
@@ -365,5 +383,7 @@ const authSlice = createSlice({
       });
   },
 });
+
+export const { deleteUser } = authSlice.actions;
 
 export default authSlice.reducer;
