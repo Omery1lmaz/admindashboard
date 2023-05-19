@@ -24,11 +24,24 @@ import CategoryCostList from './pages/Admin/CostList/category/CategoryCostList';
 import ProductCostList from './pages/Admin/CostList/product/ProductCostList';
 import Buttons from './pages/UiElements/Buttons';
 import { ToastContainer } from 'react-toastify';
-
+import { socket } from './services/socketHelper';
+import { successNotification } from './services/notificationHelper';
+import { useSelector } from 'react-redux';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const preloader = document.getElementById('preloader');
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    // @ts-expect-error
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    socket.emit('joinRoom', user?._id);
+    socket.on('siparisBildirimi', (order) =>
+      successNotification('Yeni sipariş id: ' + order._id)
+    );
+  }, [socket]);
 
   if (preloader) {
     setTimeout(() => {
