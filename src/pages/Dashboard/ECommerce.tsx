@@ -14,6 +14,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Typography } from '@mui/material';
 import { getWaiters } from '../../store/waiterSlice.ts';
+import { LinearIndeterminate } from '../../components/progressBar/linearProgressBar.tsx';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -105,18 +106,36 @@ const ECommerce = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardOne
           title={'Total Cost'}
-          price={`${adminDashBoard.totalCost} TL`}
-          icon={<BanknotesIcon></BanknotesIcon>}
+          price={
+            adminDashBoard.totalCost ? (
+              <span>{adminDashBoard.totalCost} TL</span>
+            ) : (
+              <LinearIndeterminate />
+            )
+          }
+          icon={<BanknotesIcon />}
         />
         <CardOne
           title={'Total Order'}
-          price={`${adminDashBoard.totalOrder}`}
-          icon={<BanknotesIcon></BanknotesIcon>}
+          price={
+            adminDashBoard.totalOrder ? (
+              <span>{adminDashBoard.totalCost} TL</span>
+            ) : (
+              <LinearIndeterminate />
+            )
+          }
+          icon={<BanknotesIcon />}
         />
         <CardOne
           title={'Total Tip'}
-          price={`${adminDashBoard.totalTipCost} TL`}
-          icon={<BanknotesIcon></BanknotesIcon>}
+          price={
+            adminDashBoard.totalOrder ? (
+              <span>{adminDashBoard.totalTipCost} TL</span>
+            ) : (
+              <LinearIndeterminate />
+            )
+          }
+          icon={<BanknotesIcon />}
         />
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">

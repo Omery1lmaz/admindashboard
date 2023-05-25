@@ -97,7 +97,7 @@ function App() {
         />
 
         <Route
-          path="/edit-product"
+          path="/edit-product/:id"
           element={<GuardedRoute component={EditProduct} />}
         />
         <Route

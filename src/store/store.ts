@@ -1,11 +1,12 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authenticationSlices from "./authenticationSlices";
-import cartSlice from "./shopping-cart/cartSlice";
-import cartUiSlice from "./shopping-cart/cartUiSlice";
-import productSlices from "./productSlices";
-import waiterSlice from "./waiterSlice";
-import State from "types/AuthSliceState";
-import { ToolkitStore } from "@reduxjs/toolkit/dist/configureStore";
+import { configureStore } from '@reduxjs/toolkit';
+import authenticationSlices from './authenticationSlices';
+import cartSlice from './shopping-cart/cartSlice';
+import cartUiSlice from './shopping-cart/cartUiSlice';
+import productSlices from './productSlices';
+import waiterSlice from './waiterSlice';
+import State from 'types/AuthSliceState';
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
+import promotionSlices from './promotionSlices';
 
 const store: ToolkitStore<IStore> = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store: ToolkitStore<IStore> = configureStore({
     auth: authenticationSlices,
     product: productSlices,
     waiter: waiterSlice,
+    promotion: promotionSlices,
   },
 });
 

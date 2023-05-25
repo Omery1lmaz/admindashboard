@@ -330,23 +330,6 @@ export const getCategoriesBySeller = createAsyncThunk(
   }
 );
 
-export const getPromotionsBySeller = createAsyncThunk(
-  '/getPromotionsBySeller',
-  async (thunkAPI) => {
-    try {
-      const response = await productService.getPromotionsBySeller();
-      return response;
-    } catch (error: any) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-    }
-  }
-);
-
 export const getCategoriesBySellerId = createAsyncThunk(
   '/getCategoriesBySellerId',
   async (id, thunkAPI) => {
@@ -444,7 +427,7 @@ export const getProductsBySeller = createAsyncThunk(
 
 export const getProductsBySellerLimit = createAsyncThunk(
   '/getProductsBySellerLimit',
-  async ({  skip, limit }: any, thunkAPI) => {
+  async ({ skip, limit }: any, thunkAPI) => {
     console.log(skip, 'skip');
     const v = skip == 1 ? 0 : skip * 10 - 10;
     try {
@@ -549,7 +532,6 @@ interface InitialState {
   product: any;
   sellerProducts: any[];
   adminDashBoard: any;
-  promotions: any[];
 }
 
 const initialState: InitialState = {
@@ -566,7 +548,6 @@ const initialState: InitialState = {
   product: {},
   sellerProducts: [],
   adminDashBoard: {},
-  promotions: [],
 };
 
 // Then, handle actions in your reducers:
@@ -578,19 +559,6 @@ const productSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getPromotionsBySeller.fulfilled, (state, action) => {
-        state.isLoadingP = false;
-        state.promotions = action.payload;
-      })
-      .addCase(getPromotionsBySeller.rejected, (state, action) => {
-        state.isErrorP = true;
-        state.isSuccessP = false;
-        state.isLoadingP = false;
-        state.messageP = action.payload as any;
-      })
-      .addCase(getPromotionsBySeller.pending, (state, action) => {
-        state.isLoadingP = true;
-      })
       .addCase(updateProductsImage.fulfilled, (state, action) => {
         state.isLoadingP = false;
       })

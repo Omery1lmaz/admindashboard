@@ -205,6 +205,7 @@ const ProductList = () => {
                     <PencilSquareIcon
                       className="cursor-pointer hover:scale-110"
                       width={16}
+                      onClick={() => navigate(`/edit-product/${product._id}`)}
                     />
                     <TrashIcon
                       className="cursor-pointer hover:scale-110"
