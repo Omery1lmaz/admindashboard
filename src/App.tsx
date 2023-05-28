@@ -27,6 +27,9 @@ import { ToastContainer } from 'react-toastify';
 import { socket } from './services/socketHelper';
 import { successNotification } from './services/notificationHelper';
 import { useSelector } from 'react-redux';
+import EditVariation from './pages/Admin/VariationPages/EditVariation';
+import VariationList from './pages/Admin/VariationPages/VariationList';
+import AddVarition from './pages/Admin/VariationPages/AddVariation';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -138,6 +141,18 @@ function App() {
         <Route
           path="/product-list"
           element={<Navigate to={'/product-list/1'} />}
+        />
+        <Route
+          path="/edit-promotion/:id"
+          element={<GuardedRoute component={EditVariation} />}
+        />
+        <Route
+          path="/promotion-list"
+          element={<GuardedRoute component={VariationList} />}
+        />
+        <Route
+          path="/add-promotion"
+          element={<GuardedRoute component={AddVarition} />}
         />
 
         <Route path="/calendar" element={<Calendar />} />

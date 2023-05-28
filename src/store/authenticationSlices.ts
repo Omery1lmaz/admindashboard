@@ -320,11 +320,11 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(GetUserDetails.fulfilled, (state, action) => {
+        localStorage.setItem('user', JSON.stringify(action.payload));
         state.user = action.payload;
         state.isLoading = false;
       })
       .addCase(GetUserDetails.rejected, (state, action) => {
-        console.log('gety user details rejected');
         state.isError = true;
         state.isSuccess = false;
         state.user = null;

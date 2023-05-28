@@ -613,6 +613,7 @@ const AddProduct = () => {
                           accept=".png, .jpg, .jpeg"
                           required
                           onChange={(e) => {
+                            // @ts-expect-error
                             setImage(e.target.files[0]);
                           }}
                         />

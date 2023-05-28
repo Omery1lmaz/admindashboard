@@ -3,25 +3,34 @@ import { Route, Navigate, useNavigate } from 'react-router-dom';
 import { GetUserDetails, deleteUser } from '../store/authenticationSlices';
 import { useSelector, useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
+import { LargeCircularProgressBar } from '../components/progressBar/circularProgressBar';
 const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
-  console.log('guardedRoute');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state: any) => state.auth);
   const token = Cookies.get('connect.sid');
-  useEffect(() => {}, [user]);
   useEffect(() => {
-    if (!token) {
-      console.log('Token');
+    if (!token && !user) {
+      console.log('No token founded');
       dispatch(deleteUser());
       navigate('/auth/signin');
-    }
-    if (user && token) {
+    } else {
+      console.log('Token and user founded successfully');
       // @ts-ignore
       dispatch(GetUserDetails());
     }
   }, []);
-  return <>{user ? <Component /> : <Navigate to="/auth/signin" />}</>;
+  return (
+    <>
+      {user && token && !isLoading ? (
+        <Component />
+      ) : (
+        <Navigate to="/auth/signin" />
+      )}
+      {/* {!token && <Navigate to="/auth/signin" />} */}
+      {isLoading && <LargeCircularProgressBar />}
+    </>
+  );
 };
 
 export default GuardedRoute;
