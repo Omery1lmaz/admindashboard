@@ -555,7 +555,15 @@ const initialState: InitialState = {
 const productSlice = createSlice({
   name: 'users',
   initialState,
-  reducers: {},
+  reducers: {
+    addOrder(state: any, action: any) {
+      console.log('action', action.payload);
+      console.log('length', state.orders);
+      const newOrders = [action.payload, ...state.orders];
+      state.orders = newOrders;
+      console.log('length after', state.orders);
+    },
+  },
 
   extraReducers: (builder) => {
     builder
@@ -878,5 +886,6 @@ const productSlice = createSlice({
       });
   },
 });
+export const { addOrder } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -13,6 +13,44 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Box, Typography } from '@mui/material';
 
+interface Item {
+  name: string;
+  qty: number;
+  image: string;
+  price: number;
+  variation: any[];
+  promotion: null | any;
+  product: string;
+  _id: string;
+}
+
+interface Seller {
+  _id: string;
+  name: string;
+}
+
+interface ShippingAddress {
+  table: string;
+}
+
+interface Order {
+  shippingAddress: ShippingAddress;
+  _id: string;
+  orderMessage: string;
+  name: string;
+  user: string;
+  seller: Seller;
+  items: Item[];
+  isReady: string;
+  taxPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
+  takeAway: boolean;
+  Tip: string[];
+  date: string;
+  __v: number;
+}
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -58,6 +96,7 @@ const OrderList = () => {
   const handleOpenODetailModal = () => setOpenOrderDetailModal(true);
   const handleCloseFilter = () => setFilterOpen(false);
   const [activePage, setActivePage] = useState<number>(1);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const filterStatusHandle = (e: any) => {
     setFilter({ ...filter, isReady: e.target.value });
@@ -66,7 +105,6 @@ const OrderList = () => {
     setFilter({ ...filter, date: { $gte: new Date(e.target.value) } });
   };
 
-  const [selectedOrder, setSelectedOrder] = useState();
   //@ts-expect-error
   let { orders, isLoadingP } = useSelector((state) => state.product);
   const getOrders = () => {
@@ -80,6 +118,10 @@ const OrderList = () => {
       })
     );
   };
+  useEffect(() => {
+    console.log(selectedOrder);
+  }, [selectedOrder]);
+
   useEffect(() => {
     page && setActivePage(parseInt(page));
     parseInt(page as string) === activePage
@@ -211,7 +253,12 @@ const OrderList = () => {
                     second;
 
                   return (
-                    <tr onClick={() => setSelectedOrder(order)}>
+                    <tr
+                      onClick={() => {
+                        handleOpenODetailModal();
+                        setSelectedOrder(order);
+                      }}
+                    >
                       <td
                         key={index}
                         className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11"
@@ -297,70 +344,70 @@ const OrderList = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <div className="absolute left-2/4 top-2/4 h-3/4 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-meta-1 p-4 text-white">
+          <div className="absolute left-2/4 top-2/4 h-3/4 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-meta-2 p-4 text-white dark:bg-meta-4">
             <h3 className="text-lg font-medium">Order Detail</h3>
             <hr className="my-2"></hr>
             <div className="flex flex-col gap-1">
               <span className="text-sm font-normal">
-                <span className="font-medium">Order Owner: </span> Ömer Faruk
-                Yılmaz
+                <span className="font-medium">Order Owner: </span>
+                {selectedOrder?.name}
               </span>
               <span className="text-sm font-normal">
-                <span className="font-medium">Order Cost: </span> 255 TL
+                <span className="font-medium">Order Cost: </span>
+                {selectedOrder?.totalPrice}
               </span>
               <span className="text-sm font-normal">
-                <span className="font-medium">Order Table: </span> 26
+                <span className="font-medium">Order Table: </span>
+                {selectedOrder?.shippingAddress.table}
               </span>
               <span className="text-sm font-normal">
-                <span className="font-medium">Order Message: </span> Lorem,
-                ipsum dolor sit amet consectetur adipisicing elit. Numquam quasi
-                ratione provident
+                <span className="font-medium">Order Message: </span>
+                {selectedOrder?.orderMessage}
               </span>
               <hr className="my-2"></hr>
             </div>
             <div>
               <h2 className="text-lg font-medium ">Products</h2>
               <div className="max-h-[40vh] overflow-y-auto">
-                <div className="border-gray-50 my-2 flex flex-col gap-1 rounded border p-2">
-                  <span className="text-sm font-medium">
-                    Product Name: <span>Türk Kahvesi</span>
-                  </span>
-                  <span className="text-sm font-medium">
-                    Quantity: <span>2</span>
-                  </span>
-                </div>
-                <div className="border-gray-50 flex flex-col gap-1 rounded border p-2">
-                  <span className="text-sm font-medium">
-                    Product Name: <span>Türk Kahvesi</span>
-                  </span>
-                  <span className="text-sm font-medium">
-                    Quantity: <span>2</span>
-                  </span>
-                </div>
-                <div className="border-gray-50 flex flex-col gap-1 rounded border p-2">
-                  <span className="text-sm font-medium">
-                    Product Name: <span>Türk Kahvesi</span>
-                  </span>
-                  <span className="text-sm font-medium">
-                    Quantity: <span>2</span>
-                  </span>
-                </div>
-                <div className="border-gray-50 flex flex-col gap-1 rounded border p-2">
-                  <span className="text-sm font-medium">
-                    Product Name: <span>Türk Kahvesi</span>
-                  </span>
-                  <span className="text-sm font-medium">
-                    Quantity: <span>2</span>
-                  </span>
-                </div>
-                <div className="border-gray-50 flex flex-col gap-1 rounded border p-2">
-                  <span className="text-sm font-medium">
-                    Product Name: <span>Türk Kahvesi</span>
-                  </span>
-                  <span className="text-sm font-medium">
-                    Quantity: <span>2</span>
-                  </span>
-                </div>
+                {selectedOrder?.items.map((product) => {
+                  return (
+                    <div className="border-gray-50 my-2 flex flex-col gap-1 rounded border p-2">
+                      <span className="text-sm font-medium">
+                        Product Name: <span>{product.name}</span>
+                      </span>
+                      <span className="text-sm font-medium">
+                        Quantity: <span>{product.price}</span>
+                      </span>
+                      {Array.isArray(product.promotion) && (
+                        <div>
+                          <span className="text-sm font-medium">
+                            Promotions:{' '}
+                          </span>
+                          {product.promotion.map((i: any) =>
+                            i.products.map((v: any) => (
+                              <span>{`${v.name} `}</span>
+                            ))
+                          )}
+                        </div>
+                      )}
+                      {Array.isArray(product.variation) &&
+                        product.variation[0] && (
+                          <div>
+                            <span className="text-sm font-medium">
+                              Variations:
+                            </span>
+                            {product.variation.map(
+                              (i: any) => (
+                                // i.product.map((v: any) => (
+                                <span>{`${i.product.name} `}</span>
+                              )
+                              // ))
+                            )}
+                          </div>
+                        )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

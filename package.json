@@ -39,6 +39,8 @@
     "react-apexcharts": "^1.4.0",
     "react-day-picker": "^8.7.1",
     "react-dom": "^18.2.0",
+    "react-phone-input-2": "^2.15.1",
+    "react-phone-number-input": "^3.2.23",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
     "react-tailwindcss-datepicker": "^1.6.0",

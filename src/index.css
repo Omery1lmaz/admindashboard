@@ -146,6 +146,30 @@ span.flatpickr-weekday,
   @apply bg-primary border-primary dark:border-primary;
 }
 
+.custom-phone-number-input input {
+  background: transparent !important;
+  border: none !important;
+}
+.flag-dropdown .open {
+  background: transparent !important;
+}
+.country-list {
+  background-color: gray !important;
+}
+.flag-dropdown:hover:focus {
+  background: transparent !important;
+}
+
+.flag-dropdown {
+  background-color: transparent !important;
+  border: none !important;
+}
+.custom-phone-number-input:focus {
+  border: 2px solid red;
+}
+.PhoneInputCountrySelect {
+  background-color: gray;
+}
 .custom-input-date::-webkit-calendar-picker-indicator {
   background-position: center;
   background-repeat: no-repeat;

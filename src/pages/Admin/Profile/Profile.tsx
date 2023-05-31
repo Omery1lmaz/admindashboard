@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import Breadcrumb from '../../../components/Breadcrumb';
-import userThree from '../images/user/user-03.png';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import { useEffect, useState } from 'react';
 import {
@@ -42,6 +43,7 @@ const Settings = () => {
     Name: Yup.string().required('Name is required'),
     Address: Yup.string().required('Adress is required'),
     IsTakeAway: Yup.boolean(),
+    // number: Yup.number().required('Number is required'),
   });
 
   const passwordValidate = Yup.object({
@@ -80,17 +82,19 @@ const Settings = () => {
                       Name: sellerInfo.name,
                       Address: sellerInfo.address,
                       IsTakeAway: sellerInfo.isTakeAway,
-                      Waiters: sellerInfo.Waiters,
+                      number: sellerInfo.number,
                     }}
                     validationSchema={validate}
                     onSubmit={(values) => {
-                      const { Name, Address, IsTakeAway, Waiters } = values;
+                      const { Name, Address, IsTakeAway, number } = values;
+                      console.log(number);
                       dispatch(
                         // @ts-expect-error
                         updateSellerProfile({
                           name: Name,
                           address: Address,
                           isTakeAway: IsTakeAway,
+                          number: number,
                         })
                       );
                     }}
@@ -121,7 +125,31 @@ const Settings = () => {
                               />
                             </div>
                           </div>
-
+                          <div className="w-full ">
+                            <label
+                              className="mb-3 block text-sm font-medium text-black dark:text-white"
+                              htmlFor="fullName"
+                            >
+                              Phone Number
+                            </label>
+                            <div className="relative">
+                              <PhoneInput
+                                // @ts-expect-error
+                                name="number"
+                                id="number"
+                                className="custom-phone-number-input w-full rounded border border-stroke bg-gray py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                // value={value}
+                                value={formik.values.number}
+                                onChange={(e: any) => {
+                                  formik.setFieldValue('number', e);
+                                  console.log(formik.values.number);
+                                }}
+                                onBlur={() => {
+                                  formik.setFieldTouched('number', true);
+                                }}
+                              />
+                            </div>
+                          </div>
                           <div className="mb-5.5">
                             <label
                               className="mb-3 block text-sm font-medium text-black dark:text-white"
