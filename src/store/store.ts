@@ -7,6 +7,8 @@ import waiterSlice from './waiterSlice';
 import State from 'types/AuthSliceState';
 import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 import promotionSlices from './promotionSlices';
+import printerSlices from './printerSlice';
+import promosyonSlices from './promosyonSlice';
 
 const store: ToolkitStore<IStore> = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ const store: ToolkitStore<IStore> = configureStore({
     product: productSlices,
     waiter: waiterSlice,
     promotion: promotionSlices,
+    promosyon: promosyonSlices,
+    printer: printerSlices,
   },
 });
 

@@ -156,6 +156,18 @@ span.flatpickr-weekday,
 .country-list {
   background-color: gray !important;
 }
+.form-control  {
+  background: transparent;
+  border-radius: 5px;
+   width: 100%;
+   padding: 10px 5px;
+   place-content: "Tarih Seçiniz";
+  color: white;
+}
+.rdtPicker {
+  background: gray;
+  color: white;
+}
 .flag-dropdown:hover:focus {
   background: transparent !important;
 }

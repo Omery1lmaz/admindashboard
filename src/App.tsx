@@ -31,6 +31,10 @@ import EditVariation from './pages/Admin/VariationPages/EditVariation';
 import VariationList from './pages/Admin/VariationPages/VariationList';
 import AddVarition from './pages/Admin/VariationPages/AddVariation';
 import { addOrder } from './store/productSlices';
+import EditPromosyon from './pages/Admin/PromosyonPages/EditPromosyon';
+import AddPromosyon from './pages/Admin/PromosyonPages/AddPromosyon';
+import PromosyonList from './pages/Admin/PromosyonPages/PromosyonList';
+import Printer from './pages/Admin/Printer/Printer';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
@@ -100,11 +104,30 @@ function App() {
           path="/edit-category"
           element={<Navigate to={'/edit-category/6453bbc9a10aca4239b45a0e'} />}
         />
+        {/* Start of Promosyon */}
+        <Route
+          path="/edit-promosyon/:id"
+          element={<GuardedRoute component={EditPromosyon} />}
+        />
+        <Route
+          path="/add-promosyon"
+          element={<GuardedRoute component={AddPromosyon} />}
+        />
+        <Route
+          path="/promosyon-list"
+          element={<GuardedRoute component={PromosyonList} />}
+        />
+        {/* End of Promosyon */}
 
         <Route
           path="/edit-product/:id"
           element={<GuardedRoute component={EditProduct} />}
         />
+        <Route
+          path="/printers"
+          element={<GuardedRoute component={Printer} />}
+        />
+
         <Route
           path="/edit-waiter/:id"
           element={<GuardedRoute component={EditWaiter} />}
