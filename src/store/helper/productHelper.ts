@@ -243,11 +243,7 @@ const getCatsHelper = async () => {
 const deleteProductById = async ({ id, user }: any) => {
   const response = await axios.delete(
     `http://localhost:4000/api/products/${id}`,
-    {
-      data: {
-        user: user,
-      },
-    }
+    { withCredentials: true }
   );
 
   return response.data;

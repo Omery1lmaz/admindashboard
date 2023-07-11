@@ -1,32 +1,59 @@
-import React, { useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GetUserDetails, deleteUser } from '../store/authenticationSlices';
 import { useSelector, useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
 import { LargeCircularProgressBar } from '../components/progressBar/circularProgressBar';
+
 const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state: any) => state.auth);
-  const token = Cookies.get('connect.sid');
+  const token = Cookies.get('token');
+
   useEffect(() => {
-    if (!token && !user) {
-      dispatch(deleteUser());
-      navigate('/auth/signin');
-    } else {
-      console.log('Token and user founded successfully');
-      // @ts-ignore
-      dispatch(GetUserDetails());
-    }
+    const tokenv1 = Cookies.get('token');
+    console.log(tokenv1, 'tokenv1');
+
+    // @ts-ignore
+    dispatch(GetUserDetails());
   }, []);
   return (
     <>
-      {token ? <Component /> : <Navigate to="/auth/signin" />}
+      {token ? <Component /> : <NavigateToPreviusPage />}
       {/* {!token && <Navigate to="/auth/signin" />} */}
-      {!token && !isLoading && <Navigate to="/auth/signin" />}
-      {isLoading && <LargeCircularProgressBar />}
+      {!token && !isLoading && <NavigateToPreviusPage />}
+      {!token && isLoading && <LargeCircularProgressBar />}
     </>
   );
 };
 
+const NotGuardedRoute = ({ component: Component, auth, ...rest }: any) => {
+  const { isLoading } = useSelector((state: any) => state.auth);
+  const token = Cookies.get('token');
+
+  return (
+    <>
+      {!token ? <Component /> : <NavigateToPreviusPage />}
+      {/* {!token && <Navigate to="/auth/signin" />} */}
+      {token && !isLoading && <NavigateToPreviusPage />}
+    </>
+  );
+};
+
+const NavigateToPreviusPage = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const previousPage = document.referrer;
+    console.log(previousPage, 'previous page');
+    navigate('/auth/signin');
+  }, []);
+
+  return (
+    <div>
+      <LargeCircularProgressBar />
+    </div>
+  );
+};
+export { NotGuardedRoute };
 export default GuardedRoute;

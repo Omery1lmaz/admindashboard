@@ -94,7 +94,7 @@ const DropdownUser = () => {
           {!user && (
             <li>
               <Link
-                to="/settings"
+                to="/auth/signin"
                 className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
               >
                 <ArrowRightOnRectangleIcon width={20} />

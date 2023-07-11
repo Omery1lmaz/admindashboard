@@ -224,6 +224,7 @@ export const GetUserDetails = createAsyncThunk(
   'get/userDetails',
   async (thunkAPI: any) => {
     try {
+      console.info("info")
       return await authService.GetUserDetails();
     } catch (error: any) {
       const message =
@@ -232,6 +233,8 @@ export const GetUserDetails = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
+      console.error('get user details failed');
+      thunkAPI.dispatch(deleteUser());
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -272,6 +275,9 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     deleteUser(state: State) {
+      console.log('deleteUser');
+      Cookies.remove('token');
+      localStorage.removeItem('user');
       state.user = null;
       state.userDetail = null;
     },

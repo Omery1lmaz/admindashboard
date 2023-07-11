@@ -66,6 +66,7 @@ const EditVariation = () => {
       }
     }
   }, [promotion]);
+
   const handleinputchange = (e: any, index: any) => {
     const { name, value } = e.target;
     if (name === 'isSelected') {
@@ -111,19 +112,21 @@ const EditVariation = () => {
     console.log(errorMessage);
   }, [errorMessage]);
 
-  const handleremove = (index) => {
+  const handleremove = (index: number) => {
     const list = [...inputList];
     list.splice(index, 1);
     setinputList(list);
   };
 
   const handleaddclick = () => {
+    // @ts-expect-error
     setinputList([...inputList, { name: '', price: 0, isSelected: false }]);
   };
 
   const validate = Yup.object({
     Name: Yup.string().required('Name is required'),
     Zorunlu: Yup.boolean().required('Zorunlu is required'),
+    // @ts-expect-error
     MaxValue: Yup.number('Max Value harf içermemelidir')
       .min(1, 'Max Value 1 ya da daha yüksek olmalıdır')
       .positive()
@@ -134,12 +137,15 @@ const EditVariation = () => {
   const ButtonHandleSubmit = (e: any) => {
     e.preventDefault();
   };
+  useEffect(() => {
+    console.log(promotion[0]);
+  }, [promotion]);
 
   return (
     <>
       <DefaultLayout>
         <Breadcrumb pageName="Edit Variation" />
-        {!promotion[0] && !promotion[0].variation && <h3>No Promotion</h3>}
+        {!promotion[0] && <h3>No Promotion</h3>}
         {promotion[0] && promotion[0].variation && (
           <Formik
             initialValues={{

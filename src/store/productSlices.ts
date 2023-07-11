@@ -460,6 +460,7 @@ export const getOrderBySellerWithLimit = createAsyncThunk(
         limit,
         query,
       });
+      console.log(res[0], 'v');
       return res;
     } catch (error: any) {
       const message =

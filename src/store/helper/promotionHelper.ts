@@ -16,6 +16,7 @@ const addPromotion = async ({ variation }: any) => {
 };
 
 const getPromotionById = async (id: string) => {
+  console.log('get promotion by id');
   const response = await axios.get(
     `http://localhost:4000/api/variations/${id}`,
     {

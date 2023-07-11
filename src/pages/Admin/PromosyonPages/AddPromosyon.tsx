@@ -207,7 +207,7 @@ const AddPromosyon = () => {
                                 Maximum Usage Rights
                               </label>
                               <Datetime
-                                className="w-full hover:cursor-pointer"
+                                className="w-full hover:cursor-pointer border-[1.5px] border-stroke bg-transparent focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary "
                                 onChange={(e: any) => {
                                   console.log(e, 'e');
                                   formik.setFieldValue('expirationDate', e);

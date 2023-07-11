@@ -253,12 +253,7 @@ const OrderList = () => {
                     second;
 
                   return (
-                    <tr
-                      onClick={() => {
-                        handleOpenODetailModal();
-                        setSelectedOrder(order);
-                      }}
-                    >
+                    <tr>
                       <td
                         key={index}
                         className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11"
@@ -287,15 +282,25 @@ const OrderList = () => {
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         {order.isReady}
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <td className="border-b flex gap-1 border-[#eee] py-5 px-4 dark:border-strokedark">
                         <button
                           onClick={() => {
                             handleOpen();
                           }}
-                          className="flex items-center justify-center  rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+                          className="flex items-center justify-center z-99 rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                         >
                           Change Status
                         </button>
+                        <button
+                          onClick={() => {
+                            handleOpenODetailModal();
+                            setSelectedOrder(order);
+                          }}
+                          className="flex items-center justify-center z-99 rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+                        >
+                          Detay
+                        </button>
+
                       </td>
                     </tr>
                   );
@@ -445,7 +450,6 @@ const OrderList = () => {
                     dispatch(
                       // @ts-expect-error
                       updateOrderStatus({
-                        // @ts-expect-error
                         id: selectedOrder?._id,
                         status: 'InProgress',
                       })
