@@ -2,7 +2,7 @@ import axios from "axios";
 
 // GET WAITER HELPER
 const getWaiter = async (id: any) => {
-  const { data } = await axios.get(`http://localhost:4000/api/waiters/${id}`, {
+  const { data } = await axios.get(`https://startup-service.onrender.com/api/waiters/${id}`, {
     withCredentials: true,
   });
   return data;
@@ -10,7 +10,7 @@ const getWaiter = async (id: any) => {
 
 // GET WAITERS HELPER
 const getWaitersHelper = async () => {
-  const { data } = await axios.get("http://localhost:4000/api/waiters/", {
+  const { data } = await axios.get("https://startup-service.onrender.com/api/waiters/", {
     withCredentials: true,
   });
   return data;
@@ -19,7 +19,7 @@ const getWaitersHelper = async () => {
 
 // GET WAITERS BY SELLER HELPER
 const getWaitersBySellerIdHelper = async (id: any) => {
-  const { data } = await axios.get(`http://localhost:4000/api/waiters/seller/${id}`, {
+  const { data } = await axios.get(`https://startup-service.onrender.com/api/waiters/seller/${id}`, {
     withCredentials: true,
   });
   return data;
@@ -29,7 +29,7 @@ const getWaitersBySellerIdHelper = async (id: any) => {
 const addWaiterHelper = async (waiter: any) => {
   console.log(waiter);
   const { data } = await axios.post(
-    `http://localhost:4000/api/waiters/`,
+    `https://startup-service.onrender.com/api/waiters/`,
     { waiter },
     {
       withCredentials: true,
@@ -42,7 +42,7 @@ const addWaiterHelper = async (waiter: any) => {
 const updateWaiterHelper = async (waiter: any) => {
   console.log(waiter);
   const { data } = await axios.post(
-    `http://localhost:4000/api/waiters/${waiter._id}`,
+    `https://startup-service.onrender.com/api/waiters/${waiter._id}`,
     { waiter },
     {
       withCredentials: true,
@@ -55,7 +55,7 @@ const updateWaiterHelper = async (waiter: any) => {
 const deleteWaiterHelper = async (id: any) => {
   console.log(id);
   const { data } = await axios.delete(
-    `http://localhost:4000/api/waiters/${id}`,
+    `https://startup-service.onrender.com/api/waiters/${id}`,
     {
       withCredentials: true,
     }

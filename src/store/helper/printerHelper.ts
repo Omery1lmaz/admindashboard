@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
 
 const getPrinters = async () => {
   const response = await axiosInstance.get(
-    'http://localhost:4000/api/printer',
+    'https://startup-service.onrender.com/api/printer',
     {
       withCredentials: true,
     }
@@ -18,7 +18,7 @@ const getPrinters = async () => {
 const addPrinter = async ({ printer }: any) => {
   console.log('user deneme', printer);
   const response = await axiosInstance.post(
-    'http://localhost:4000/api/admin/printer',
+    'https://startup-service.onrender.com/api/admin/printer',
     printer,
     {
       withCredentials: true,
@@ -37,7 +37,7 @@ const getLocalPrinters = async () => {
 
 const updatePrinters = async ({ printers }: any) => {
   const response = await axiosInstance.post(
-    'http://localhost:4000/api/printer/update',
+    'https://startup-service.onrender.com/api/printer/update',
     { printers },
     {
       withCredentials: true,

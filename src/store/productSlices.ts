@@ -3,6 +3,7 @@ import axios from 'axios';
 import authService from './helper/authHelper';
 import productService from './helper/productHelper';
 import { useNavigate } from 'react-router-dom';
+import env from '../env';
 import {
   errorNotification,
   successNotification,
