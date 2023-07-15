@@ -12,7 +12,7 @@ import { getAdminDashBoardInf } from '../../store/productSlices.ts';
 import { BanknotesIcon } from '@heroicons/react/24/outline';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import { Typography } from '@mui/material';
+import { Typography, getDialogContentTextUtilityClass } from '@mui/material';
 import { getWaiters } from '../../store/waiterSlice.ts';
 import { LinearIndeterminate } from '../../components/progressBar/linearProgressBar.tsx';
 
@@ -37,14 +37,47 @@ interface IFilterQuery {
     $lte?: Date;
   };
 }
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+yesterday.setHours(0, 0, 0, 0);
 
+const currentDate = new Date();
+const currentDay = currentDate.getDay();
+const mondayOffset = (currentDay === 0) ? -6 : 1 - currentDay;
+const mondayDate = new Date(currentDate.setDate(currentDate.getDate() + mondayOffset));
+mondayDate.setHours(0, 0, 0, 0);
+
+const currentMonth = currentDate.getMonth();
+const firstDayOfMonth = new Date(currentDate.getFullYear(), currentMonth, 1);
+firstDayOfMonth.setHours(0, 0, 0, 0);
+
+const filterDays = [
+  {
+    title: "Bugün",
+    date: {
+      $gte: new Date(Date.now()),
+    }
+  },
+  {
+    title: "Dün",
+    date: {
+      $gte: yesterday, $lt: new Date(),
+    }
+  },
+  {
+    title: "Bu Hafta",
+    date: {
+      $gte: firstDayOfMonth
+    }
+  },
+]
 const ECommerce = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // @ts-expect-error
   const { adminDashBoard, isLoadingP } = useSelector((state) => state.product);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<IFilterQuery>({});
+  const [filter, setFilter] = useState<IFilterQuery>({ date: filterDays[1].date });
   const [open, setOpen] = useState(false);
   const handleOpenFilter = () => setFilterOpen(true);
   const handleCloseFilter = () => setFilterOpen(false);
@@ -93,6 +126,10 @@ const ECommerce = () => {
     // @ts-expect-error
     dispatch(getAdminDashBoardInf({ query: filter }));
   };
+  useEffect(() => {
+    getData()
+  }, [filter])
+
   return (
     <DefaultLayout>
       <div className="w-full p-2">
@@ -102,6 +139,19 @@ const ECommerce = () => {
         >
           Open modal
         </button>
+      </div>
+      <div className='flex gap-2 justify-start items-center mb-2'>
+        {
+          filterDays.map((date: any, index: number) => {
+            return (
+              <div onClick={() => {
+                setFilter({ ...filter, date: date.date });
+              }} key={index} className='p-2  border-white active:border-b'>
+                {date.title}
+              </div>
+            );
+          })
+        }
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardOne

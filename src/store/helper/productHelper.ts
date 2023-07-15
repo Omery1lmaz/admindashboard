@@ -198,6 +198,15 @@ const updateProduct = async ({ product, productId }: any) => {
   return response.data;
 };
 
+const updateProductP = async ({ product, productId }: any) => {
+  const response: any = await axios.post(
+    `http://localhost:4000/api/products/p/${productId}`,
+    { product },
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
 // Get Product By Id
 
 const getProductsByIdHelper = async (id: any) => {
@@ -275,5 +284,6 @@ const productService = {
   getAdminDashboardInf,
   getPromotionsBySeller,
   createTip,
+  updateProductP,
 };
 export default productService;

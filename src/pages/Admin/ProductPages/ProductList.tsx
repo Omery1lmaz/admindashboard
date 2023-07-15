@@ -9,6 +9,9 @@ import {
   getOrderBySeller,
   getOrderBySellerWithLimit,
   getProductsBySellerLimit,
+  updateProduct,
+  updateProductIsActive,
+  updateProductP,
 } from '../../../store/productSlices';
 import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/joy/CircularProgress';
@@ -202,6 +205,43 @@ const ProductList = () => {
                 </div>
                 <div className="col-span-1 flex items-center">
                   <div className="flex items-center justify-center gap-2">
+                    <ul>
+                      <li className="list-none ">
+                        <label
+                          className={`relative m-0 block h-7.5 w-14 rounded-full ${
+                            product.isActive ? 'bg-primary' : 'bg-stroke'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            onChange={() => {
+                              dispatch(
+                                // @ts-ignore
+                                updateProductP({
+                                  product: { isActive: !product.isActive },
+                                  productId: product._id,
+                                })
+                              );
+                              dispatch(
+                                // @ts-ignore
+                                updateProductIsActive({
+                                  _id: product._id,
+                                  isActive: !product.isActive,
+                                })
+                              );
+                            }}
+                            className="dur absolute top-0 z-50 m-0 h-full w-full cursor-pointer opacity-0"
+                          />
+                          <span
+                            className={`absolute top-1/2 left-[3px] flex h-6 w-6 -translate-y-1/2 translate-x-0 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ${
+                              product.isActive &&
+                              '!right-[3px] !translate-x-full'
+                            }`}
+                          ></span>
+                        </label>
+                      </li>
+                    </ul>
+
                     <PencilSquareIcon
                       className="cursor-pointer hover:scale-110"
                       width={16}

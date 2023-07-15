@@ -519,6 +519,28 @@ export const updateProduct = createAsyncThunk(
     }
   }
 );
+export const updateProductP = createAsyncThunk(
+  '/updateProduct',
+  async ({ product, productId }: any, { thunkAPI }: any) => {
+    try {
+      const response = await productService.updateProductP({
+        product,
+        productId,
+      });
+      successNotification('Product başarıyla güncellendi');
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 interface InitialState {
   categories: any[];
   category: any;
@@ -563,6 +585,17 @@ const productSlice = createSlice({
       const newOrders = [action.payload, ...state.orders];
       state.orders = newOrders;
       console.log('length after', state.orders);
+    },
+    updateProductIsActive(state: InitialState, action: any) {
+      const product = action.payload;
+      console.log('product', product);
+      const newProducts = [...state.sellerProducts];
+      const index: number = newProducts.findIndex(
+        (i: any) => i._id === product._id
+      );
+      console.log(index, 'index');
+      newProducts[index].isActive = product.isActive;
+      state.sellerProducts = [...newProducts];
     },
   },
 
@@ -887,6 +920,6 @@ const productSlice = createSlice({
       });
   },
 });
-export const { addOrder } = productSlice.actions;
+export const { addOrder, updateProductIsActive } = productSlice.actions;
 
 export default productSlice.reducer;
