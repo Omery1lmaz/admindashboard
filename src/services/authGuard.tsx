@@ -8,10 +8,10 @@ import { LargeCircularProgressBar } from '../components/progressBar/circularProg
 const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
   const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state: any) => state.auth);
-  const token = Cookies.get('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const tokenv1 = Cookies.get('token');
+    const tokenv1 = localStorage.getItem('token');
     console.log(tokenv1, 'tokenv1');
 
     // @ts-ignore
@@ -29,7 +29,7 @@ const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
 
 const NotGuardedRoute = ({ component: Component, auth, ...rest }: any) => {
   const { isLoading } = useSelector((state: any) => state.auth);
-  const token = Cookies.get('token');
+  const token = localStorage.getItem('token');
 
   return (
     <>

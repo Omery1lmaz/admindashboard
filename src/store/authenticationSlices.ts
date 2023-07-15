@@ -18,6 +18,7 @@ export const loginUser = createAsyncThunk(
     console.log('user', user);
     try {
       const response = await authService.login(user);
+      console.log('response', response);
       localStorage.setItem(
         'user',
         JSON.stringify({
@@ -25,6 +26,7 @@ export const loginUser = createAsyncThunk(
           email: response.email,
           _id: response._id,
           isAdmin: response.isAdmin,
+          token: response.session.token,
         })
       );
       successNotification('Giriş Başarılı');
@@ -224,7 +226,7 @@ export const GetUserDetails = createAsyncThunk(
   'get/userDetails',
   async (thunkAPI: any) => {
     try {
-      console.info("info")
+      console.info('info');
       return await authService.GetUserDetails();
     } catch (error: any) {
       const message =
