@@ -29,6 +29,9 @@ export const loginUser = createAsyncThunk(
           token: response.session.token,
         })
       );
+      localStorage.setItem('token', JSON.stringify(response.session.token));
+      Cookies.set('token', response.session.token);
+
       successNotification('Giriş Başarılı');
       return response;
     } catch (error: any) {
