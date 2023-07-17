@@ -1,14 +1,33 @@
 import axios from 'axios';
-const axiosInstance = axios.create({
-  withCredentials: true, // CSRF token'ını cookie'den almak için bu ayarı etkinleştirin
-  xsrfCookieName: 'XSRF-TOKEN', // Sunucudan alınan token'ı cookie'den okumak için kullanılan isim
-  xsrfHeaderName: 'X-XSRF-TOKEN', // CSRF token'ını istek başlığına eklemek için kullanılan isim
+import Cookies from 'js-cookie';
+// const axiosInstance = axios.create({
+//   withCredentials: true, // CSRF token'ını cookie'den almak için bu ayarı etkinleştirin
+//   xsrfCookieName: 'XSRF-TOKEN', // Sunucudan alınan token'ı cookie'den okumak için kullanılan isim
+//   xsrfHeaderName: 'X-XSRF-TOKEN', // CSRF token'ını istek başlığına eklemek için kullanılan isim
+// });
+const defaultOptions = {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+// Create instance
+let axiosInstance = axios.create(defaultOptions);
+
+// Set the AUTH token for any request
+axiosInstance.interceptors.request.use(function (config) {
+  const token = Cookies.get('token');
+  console.log('token', token);
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  console.log(config.headers.Authorization);
+  return config;
 });
 
 const login = async (user: any) => {
   console.log('user deneme', user);
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/admin/login',
+    'http://localhost:4000/api/admin/login',
     user,
     {
       withCredentials: true,
@@ -20,7 +39,7 @@ const login = async (user: any) => {
 
 const getInfoHelper = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/users/info',
+    'http://localhost:4000/api/users/info',
     {
       withCredentials: true,
     }
@@ -29,14 +48,14 @@ const getInfoHelper = async () => {
 };
 const getSellerInfoHelper = async (id: any) => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/users/info/${id}`
+    `http://localhost:4000/api/users/info/${id}`
   );
   return response.data;
 };
 
 const updateUserProfileHelper = async (profile: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/users/profile',
+    'http://localhost:4000/api/users/profile',
     { profile: profile },
     { withCredentials: true }
   );
@@ -49,7 +68,7 @@ const updateUserProfileHelper = async (profile: any) => {
 
 const updateUserImageHelper = async ({ formData }: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/users/image',
+    'http://localhost:4000/api/users/image',
     formData,
     { withCredentials: true }
   );
@@ -62,7 +81,7 @@ const updateUserImageHelper = async ({ formData }: any) => {
 
 const register = async (user: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/users/register',
+    'http://localhost:4000/api/users/register',
     user
   );
 
@@ -75,7 +94,7 @@ const register = async (user: any) => {
 const resetPasswordLink = async (email: any) => {
   console.log(email);
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/users/reset-password',
+    'http://localhost:4000/api/users/reset-password',
     { email }
   );
 
@@ -88,7 +107,7 @@ const resetPasswordLink = async (email: any) => {
 const resetPasswordVerify = async ({ id, token, password }: any) => {
   console.log(token + id + password);
   const response = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/users/reset-password/${id}/${token}`,
+    `http://localhost:4000/api/users/reset-password/${id}/${token}`,
     { password }
   );
 
@@ -101,7 +120,7 @@ const resetPasswordVerify = async ({ id, token, password }: any) => {
 const VerifyUser = async ({ id, token }: any) => {
   console.log(token + id);
   const response = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/users/verify/${id}/${token}`
+    `http://localhost:4000/api/users/verify/${id}/${token}`
   );
 
   if (response.data) {
@@ -116,7 +135,7 @@ const updatePasswordHelper = async ({
   newPasswordConfirm,
 }: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/users/update-password',
+    'http://localhost:4000/api/users/update-password',
     {
       oldPassword,
       newPassword,
@@ -132,7 +151,7 @@ const updatePasswordHelper = async ({
 
 const GetUserDetails = async () => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/admin/details',
+    'http://localhost:4000/api/admin/details',
     {},
     { withCredentials: true }
   );
@@ -144,7 +163,7 @@ const GetUserDetails = async () => {
 
 const GetSellers = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/users/sellers'
+    'http://localhost:4000/api/users/sellers'
   );
   return response.data;
 };

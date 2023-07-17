@@ -1,8 +1,27 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+const defaultOptions = {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+// Create instance
+let axiosInstance = axios.create(defaultOptions);
+
+// Set the AUTH token for any request
+axiosInstance.interceptors.request.use(function (config) {
+  const token = Cookies.get('token');
+  console.log('token', token);
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  console.log(config.headers.Authorization);
+  return config;
+});
 
 const getPromosyonsBySeller = async () => {
-  const response = await axios.get(
-    `https://startup-service.onrender.com/api/promotion/seller`,
+  const response = await axiosInstance.get(
+    `http://localhost:4000/api/promotion/seller`,
     {
       withCredentials: true,
     }
@@ -10,8 +29,8 @@ const getPromosyonsBySeller = async () => {
   return response.data;
 };
 const addPromotion = async ({ promotion }: any) => {
-  const response = await axios.post(
-    `https://startup-service.onrender.com/api/promotion/`,
+  const response = await axiosInstance.post(
+    `http://localhost:4000/api/promotion/`,
     { promotion },
     { withCredentials: true }
   );
@@ -19,8 +38,8 @@ const addPromotion = async ({ promotion }: any) => {
 };
 
 const getPromotionById = async (id: string) => {
-  const response = await axios.get(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+  const response = await axiosInstance.get(
+    `http://localhost:4000/api/promotion/${id}`,
     {
       withCredentials: true,
     }
@@ -29,8 +48,8 @@ const getPromotionById = async (id: string) => {
 };
 
 const updatePromotionById = async ({ promotion, id }: any) => {
-  const response = await axios.post(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+  const response = await axiosInstance.post(
+    `http://localhost:4000/api/promotion/${id}`,
     {
       promotion,
     },
@@ -42,8 +61,8 @@ const updatePromotionById = async ({ promotion, id }: any) => {
 };
 
 const deletePromotionById = async (id: any) => {
-  const response = await axios.delete(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+  const response = await axiosInstance.delete(
+    `http://localhost:4000/api/promotion/${id}`,
     {
       withCredentials: true,
     }

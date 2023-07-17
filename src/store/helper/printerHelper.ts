@@ -1,13 +1,28 @@
 import axios from 'axios';
-const axiosInstance = axios.create({
-  withCredentials: true, // CSRF token'ını cookie'den almak için bu ayarı etkinleştirin
-  xsrfCookieName: 'XSRF-TOKEN', // Sunucudan alınan token'ı cookie'den okumak için kullanılan isim
-  xsrfHeaderName: 'X-XSRF-TOKEN', // CSRF token'ını istek başlığına eklemek için kullanılan isim
+import Cookies from 'js-cookie';
+const defaultOptions = {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+// Create instance
+let axiosInstance = axios.create(defaultOptions);
+
+// Set the AUTH token for any request
+axiosInstance.interceptors.request.use(function (config) {
+  const token = Cookies.get('token');
+  console.log('token', token);
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  console.log(config.headers.Authorization);
+  return config;
 });
+
 
 const getPrinters = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/printer',
+    'http://localhost:4000/api/printer',
     {
       withCredentials: true,
     }
@@ -18,7 +33,7 @@ const getPrinters = async () => {
 const addPrinter = async ({ printer }: any) => {
   console.log('user deneme', printer);
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/admin/printer',
+    'http://localhost:4000/api/admin/printer',
     printer,
     {
       withCredentials: true,
@@ -37,7 +52,7 @@ const getLocalPrinters = async () => {
 
 const updatePrinters = async ({ printers }: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/printer/update',
+    'http://localhost:4000/api/printer/update',
     { printers },
     {
       withCredentials: true,
