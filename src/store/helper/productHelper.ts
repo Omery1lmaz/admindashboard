@@ -13,9 +13,7 @@ let axiosInstance = axios.create(defaultOptions);
 // Set the AUTH token for any request
 axiosInstance.interceptors.request.use(function (config) {
   const token = Cookies.get('token');
-  console.log('token', token);
   config.headers.Authorization = token ? `Bearer ${token}` : '';
-  console.log(config.headers.Authorization);
   return config;
 });
 

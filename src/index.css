@@ -193,6 +193,10 @@ span.flatpickr-weekday,
 .custom-input-date-2::-webkit-calendar-picker-indicator {
   background-image: url(./images/icon/icon-arrow-down.svg);
 }
+.error {
+  font-size: 0.9rem;
+  color: red;
+}
 
 [x-cloak] {
   display: none !important;

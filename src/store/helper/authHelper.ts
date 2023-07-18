@@ -18,9 +18,7 @@ let axiosInstance = axios.create(defaultOptions);
 // Set the AUTH token for any request
 axiosInstance.interceptors.request.use(function (config) {
   const token = Cookies.get('token');
-  console.log('token', token);
   config.headers.Authorization = token ? `Bearer ${token}` : '';
-  console.log(config.headers.Authorization);
   return config;
 });
 
@@ -105,7 +103,6 @@ const resetPasswordLink = async (email: any) => {
 };
 
 const resetPasswordVerify = async ({ id, token, password }: any) => {
-  console.log(token + id + password);
   const response = await axiosInstance.post(
     `http://localhost:4000/api/users/reset-password/${id}/${token}`,
     { password }
@@ -118,7 +115,6 @@ const resetPasswordVerify = async ({ id, token, password }: any) => {
 };
 
 const VerifyUser = async ({ id, token }: any) => {
-  console.log(token + id);
   const response = await axiosInstance.post(
     `http://localhost:4000/api/users/verify/${id}/${token}`
   );

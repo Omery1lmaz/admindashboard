@@ -11,9 +11,6 @@ const GuardedRoute = ({ component: Component, auth, ...rest }: any) => {
   const token = Cookies.get('token');
 
   useEffect(() => {
-    const tokenv1 = Cookies.get('token');
-    console.log(tokenv1, 'tokenv1');
-
     // @ts-ignore
     dispatch(GetUserDetails());
   }, []);

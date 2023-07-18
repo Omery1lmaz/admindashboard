@@ -43,8 +43,10 @@ yesterday.setHours(0, 0, 0, 0);
 
 const currentDate = new Date();
 const currentDay = currentDate.getDay();
-const mondayOffset = (currentDay === 0) ? -6 : 1 - currentDay;
-const mondayDate = new Date(currentDate.setDate(currentDate.getDate() + mondayOffset));
+const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
+const mondayDate = new Date(
+  currentDate.setDate(currentDate.getDate() + mondayOffset)
+);
 mondayDate.setHours(0, 0, 0, 0);
 
 const currentMonth = currentDate.getMonth();
@@ -53,31 +55,34 @@ firstDayOfMonth.setHours(0, 0, 0, 0);
 
 const filterDays = [
   {
-    title: "Bugün",
+    title: 'Bugün',
     date: {
       $gte: new Date(Date.now()),
-    }
+    },
   },
   {
-    title: "Dün",
+    title: 'Dün',
     date: {
-      $gte: yesterday, $lt: new Date(),
-    }
+      $gte: yesterday,
+      $lt: new Date(),
+    },
   },
   {
-    title: "Bu Hafta",
+    title: 'Bu Hafta',
     date: {
-      $gte: firstDayOfMonth
-    }
+      $gte: firstDayOfMonth,
+    },
   },
-]
+];
 const ECommerce = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // @ts-expect-error
   const { adminDashBoard, isLoadingP } = useSelector((state) => state.product);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filter, setFilter] = useState<IFilterQuery>({ date: filterDays[1].date });
+  const [filter, setFilter] = useState<IFilterQuery>({
+    date: filterDays[1].date,
+  });
   const [open, setOpen] = useState(false);
   const handleOpenFilter = () => setFilterOpen(true);
   const handleCloseFilter = () => setFilterOpen(false);
@@ -127,8 +132,8 @@ const ECommerce = () => {
     dispatch(getAdminDashBoardInf({ query: filter }));
   };
   useEffect(() => {
-    getData()
-  }, [filter])
+    getData();
+  }, [filter]);
 
   return (
     <DefaultLayout>
@@ -140,24 +145,26 @@ const ECommerce = () => {
           Open modal
         </button>
       </div>
-      <div className='flex gap-2 justify-start items-center mb-2'>
-        {
-          filterDays.map((date: any, index: number) => {
-            return (
-              <div onClick={() => {
+      <div className="mb-2 flex items-center justify-start gap-2">
+        {filterDays.map((date: any, index: number) => {
+          return (
+            <div
+              onClick={() => {
                 setFilter({ ...filter, date: date.date });
-              }} key={index} className='p-2  border-white active:border-b'>
-                {date.title}
-              </div>
-            );
-          })
-        }
+              }}
+              key={index}
+              className="border-white  p-2 active:border-b"
+            >
+              {date.title}
+            </div>
+          );
+        })}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardOne
           title={'Total Cost'}
           price={
-            adminDashBoard.totalCost ? (
+            adminDashBoard.totalCost >= 0 ? (
               <span>{adminDashBoard.totalCost} TL</span>
             ) : (
               <LinearIndeterminate />
@@ -168,7 +175,7 @@ const ECommerce = () => {
         <CardOne
           title={'Total Order'}
           price={
-            adminDashBoard.totalOrder ? (
+            adminDashBoard.totalOrder >= 0 ? (
               <span>{adminDashBoard.totalCost} TL</span>
             ) : (
               <LinearIndeterminate />
@@ -179,7 +186,7 @@ const ECommerce = () => {
         <CardOne
           title={'Total Tip'}
           price={
-            adminDashBoard.totalOrder ? (
+            adminDashBoard.totalTipCost ? (
               <span>{adminDashBoard.totalTipCost} TL</span>
             ) : (
               <LinearIndeterminate />
