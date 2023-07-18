@@ -158,7 +158,7 @@ const AddProduct = () => {
     setinputList(list);
   };
   useEffect(() => {
-    console.log(image);
+    formData.append('Image', image);
   }, [image]);
 
   const formData = new FormData();
