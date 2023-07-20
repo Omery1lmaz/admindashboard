@@ -150,7 +150,7 @@ const AddProduct = () => {
       ? // @ts-expect-error
         (list[index][name] = e.target.checked)
       : // @ts-expect-error
-        (list[index][name] = value);
+        (list[index]['name'] = value);
     // list[index][name] = value;
     setinputListVariation(list);
   };
@@ -207,26 +207,38 @@ const AddProduct = () => {
   const validate = Yup.object({
     Name: Yup.string().required('Name is required'),
     Description: Yup.string().required('Description is required'),
-    // @ts-expect-error
     Price: Yup.number('Ürün fiyatı harf içermemelidir')
       .min(1, 'Fiyat 1 ya da daha yüksek olmalıdır')
       .positive()
       .integer()
       .required('Price is required'),
     Category: Yup.array().required('Category Required'),
+    Image: Yup.string().required('Resim seçmek zorunludur'),
     inputListVariation: Yup.array().of(
-      Yup.object().shape({
-        name: Yup.string().min(3, 'En az 3 karakter içermelidir.'),
-        products: Yup.array().of(
-          Yup.object().shape({
-            name: Yup.string().min(3, 'En az 3 karakter içermelidir.'),
-            price: Yup.number().min(
-              0,
-              '0 veya daha büyük bir değer olmalıdır.'
-            ),
-          })
-        ),
-      })
+      Yup.object()
+        .required('requreired')
+        .shape({
+          name: Yup.string().min(3, 'min 3 harf olmalı'),
+          isRequired: Yup.boolean().required('Is Required field is required'),
+          products: Yup.array().of(
+            Yup.object().shape({
+              name: Yup.string().min(3, 'min 3 harf olmalı'),
+              price: Yup.number()
+                .required('Product price is required')
+                .positive('Price must be a positive number')
+                .integer('Price must be an integer')
+                .min(0, 'Price must be greater than or equal to 0'),
+            })
+          ),
+        })
+    ),
+    Promotions: Yup.array().of(
+      Yup.object()
+        .required('requreired')
+        .shape({
+          name: Yup.string().min(3, 'min 3 harf olmalı'),
+          id: Yup.string().min(3, 'min 3 harf olmalı'),
+        })
     ),
   });
   useEffect(() => {
@@ -380,12 +392,18 @@ const AddProduct = () => {
                               </label>
                               <input
                                 type="text"
-                                name={`name`}
+                                name={`inputListVariation[${i}].name`}
                                 defaultValue={x['name']}
+                                value={formik.values.inputListVariation[i].name}
                                 placeholder="Enter First Name"
-                                onChange={(e) =>
-                                  handleVariationNameChange(e, i)
-                                }
+                                onChange={(e) => {
+                                  handleVariationNameChange(e, i);
+                                  console.log(
+                                    e.target.name,
+                                    formik.values.inputListVariation
+                                  );
+                                  formik.handleChange(e);
+                                }}
                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                               />
                             </div>

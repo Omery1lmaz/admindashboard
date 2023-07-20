@@ -49,7 +49,7 @@ const AddProduct = () => {
       list[index].products[indexInside][name] = e.target.checked;
     } else {
       // @ts-expect-error
-      list[index].products[indexInside][name] = value;
+      list[index].products[indexInside]['name'] = value;
     }
     // name == 'price'
     //   ? // @ts-expect-error
@@ -70,7 +70,7 @@ const AddProduct = () => {
       ? // @ts-expect-error
         (list[index][name] = e.target.checked)
       : // @ts-expect-error
-        (list[index][name] = value);
+        (list[index]['name'] = value);
     // list[index][name] = value;
     setinputListVariation(list);
   };
@@ -125,31 +125,41 @@ const AddProduct = () => {
 
   const [image, setImage] = useState();
   const validate = Yup.object({
-    // Name: Yup.string().required('Name is required'),
-    // Description: Yup.string().required('Description is required'),
-    // Price: Yup.number('Ürün fiyatı harf içermemelidir')
-    //   .min(1, 'Fiyat 1 ya da daha yüksek olmalıdır')
-    //   .positive()
-    //   .integer()
-    //   .required('Price is required'),
-    // Category: Yup.array().required('Category Required'),
-    // inputListVariation: Yup.array().of(
-    //   Yup.object().shape({
-    //     name: Yup.string().required('Variation name is required'),
-    //     isRequired: Yup.boolean().required('Is Required field is required'),
-    //     products: Yup.array().of(
-    //       Yup.object().shape({
-    //         name: Yup.string().required('Product name is required'),
-    //         price: Yup.number()
-    //           .required('Product price is required')
-    //           .positive('Price must be a positive number')
-    //           .integer('Price must be an integer')
-    //           .min(0, 'Price must be greater than or equal to 0'),
-    //         isSelected: Yup.boolean().required('Is Selected field is required'),
-    //       })
-    //     ),
-    //   })
-    // ),
+    Name: Yup.string().required('Name is required'),
+    Description: Yup.string().required('Description is required'),
+    Price: Yup.number('Ürün fiyatı harf içermemelidir')
+      .min(1, 'Fiyat 1 ya da daha yüksek olmalıdır')
+      .positive()
+      .integer()
+      .required('Price is required'),
+    Category: Yup.array().required('Category Required'),
+    Image: Yup.string().required('Resim seçmek zorunludur'),
+    inputListVariation: Yup.array().of(
+      Yup.object()
+        .required('requreired')
+        .shape({
+          name: Yup.string().min(3, 'min 3 harf olmalı'),
+          isRequired: Yup.boolean().required('Is Required field is required'),
+          products: Yup.array().of(
+            Yup.object().shape({
+              name: Yup.string().min(3, 'min 3 harf olmalı'),
+              price: Yup.number()
+                .required('Product price is required')
+                .positive('Price must be a positive number')
+                .integer('Price must be an integer')
+                .min(0, 'Price must be greater than or equal to 0'),
+            })
+          ),
+        })
+    ),
+    Promotions: Yup.array().of(
+      Yup.object()
+        .required('requreired')
+        .shape({
+          name: Yup.string().min(3, 'min 3 harf olmalı'),
+          id: Yup.string().min(3, 'min 3 harf olmalı'),
+        })
+    ),
   });
   const handleremove = (e: any, index: any) => {
     e.preventDefault();
@@ -160,6 +170,9 @@ const AddProduct = () => {
   useEffect(() => {
     formData.append('Image', image);
   }, [image]);
+  useEffect(() => {
+    console.log(inputListVariation);
+  }, [inputListVariation]);
 
   const formData = new FormData();
 
@@ -171,6 +184,7 @@ const AddProduct = () => {
           Name: '',
           Description: '',
           Price: 1,
+          Image: '',
           Category: '',
           Promotions: '',
           inputListVariation: [
@@ -191,12 +205,22 @@ const AddProduct = () => {
             group.map((item: any) => item._id)
           );
           const flattenedIds = [].concat(...ids);
-          formData.append('Promotions', JSON.stringify(flattenedIds));
+          const newPromotionList = [...flattenedIds];
+          promotions.map((v: any, i: number) => {
+            if (v == null || v == undefined) {
+              newPromotionList.splice(i, 1);
+            }
+          });
+          console.log(newPromotionList);
+          const filteredArray = flattenedIds.filter(
+            (item: any) => item !== null && item !== undefined
+          );
+
+          formData.append('Promotions', JSON.stringify(filteredArray));
           // @ts-expect-error
           formData.append('Price', Price);
           formData.append('variations', JSON.stringify(inputListVariation));
           // @ts-expect-error
-          formData.append('Image', image);
           for (var key of formData.entries()) {
             console.log(JSON.stringify(key[0]) + ', ' + JSON.stringify(key[1]));
           }
@@ -227,15 +251,7 @@ const AddProduct = () => {
               </h3>
             </div>
             <form onSubmit={formik.handleSubmit}>
-              {
-                <span>
-                  {formik.errors.Category ||
-                    formik.errors.Description ||
-                    formik.errors.Name ||
-                    formik.errors.Price ||
-                    formik.errors.Promotions}
-                </span>
-              }
+              {<span></span>}
               <div className="p-6.5">
                 <div className="mb-4.5 flex flex-col gap-6 ">
                   <div className="w-full ">
@@ -252,7 +268,11 @@ const AddProduct = () => {
                       placeholder="Enter your first name"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
+                    {formik.errors.Name && formik.touched.Name ? (
+                      <div className="error">* {formik.errors.Name}</div>
+                    ) : null}
                   </div>
+
                   <div className="w-full">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Price
@@ -266,7 +286,11 @@ const AddProduct = () => {
                       placeholder="Enter your last name"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
+                    {formik.errors.Price && formik.touched.Price ? (
+                      <div className="error">* {formik.errors.Price}</div>
+                    ) : null}
                   </div>
+
                   <div className="w-full">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Category
@@ -298,6 +322,9 @@ const AddProduct = () => {
                       }} // Function will trigger on remove event
                       displayValue="name" // Property name to display in the dropdown options
                     />{' '}
+                    {formik.errors.Category ? (
+                      <div className="error">* {formik.errors.Category}</div>
+                    ) : null}
                   </div>
                 </div>
                 <div className="mb-6">
@@ -314,6 +341,9 @@ const AddProduct = () => {
                     placeholder="Type the product's description"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                   ></textarea>
+                  {formik.errors.Description && formik.touched.Description ? (
+                    <div className="error">* {formik.errors.Description}</div>
+                  ) : null}
                 </div>
                 <div className="mb-6">
                   <label className="mb-2.5 block text-black dark:text-white">
@@ -332,6 +362,7 @@ const AddProduct = () => {
                       onChange={(e) => {
                         // @ts-expect-error
                         setImage(e.target.files[0] as File);
+                        formik.handleChange(e);
                       }}
                     />
                     <div className="flex flex-col items-center justify-center space-y-3">
@@ -371,6 +402,9 @@ const AddProduct = () => {
                       <p>(max, 800 X 800px)</p>
                     </div>
                   </div>
+                  {formik.errors.Image ? (
+                    <div className="error">* {formik.errors.Image}</div>
+                  ) : null}
                 </div>
                 <div className="col-sm-12">
                   {inputList.map((x: any, i: any) => {
@@ -404,6 +438,7 @@ const AddProduct = () => {
                             placeholder="Select Promotion"
                             // Preselected value to persist in dropdown
                             onSelect={(selectedList, selectedItem) => {
+                              formik.setFieldValue('');
                               handleinputchange(
                                 {
                                   name: selectedItem.name,
@@ -438,6 +473,10 @@ const AddProduct = () => {
                     Add More Promotion
                   </button>
                 </div>
+                {formik.errors.Promotions ? (
+                  <div className="error">* {formik.errors.Promotions}</div>
+                ) : null}
+
                 <div className="col-sm-12">
                   {inputListVariation.map((x, i) => {
                     return (
@@ -501,9 +540,6 @@ const AddProduct = () => {
                                     onChange={(e) => {
                                       formik.handleChange(e);
                                       handleinputchangeVariation(e, i, u);
-                                      console.log(
-                                        formik.values.inputListVariation
-                                      );
                                     }}
                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                   />

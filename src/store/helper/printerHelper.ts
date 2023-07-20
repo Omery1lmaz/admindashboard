@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(function (config) {
 
 const getPrinters = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/printer',
+    'http://localhost:4000/api/printer',
     {
       withCredentials: true,
     }
@@ -31,7 +31,7 @@ const getPrinters = async () => {
 const addPrinter = async ({ printer }: any) => {
   console.log('user deneme', printer);
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/admin/printer',
+    'http://localhost:4000/api/admin/printer',
     printer,
     {
       withCredentials: true,
@@ -50,7 +50,7 @@ const getLocalPrinters = async () => {
 
 const updatePrinters = async ({ printers }: any) => {
   const response = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/printer/update',
+    'http://localhost:4000/api/printer/update',
     { printers },
     {
       withCredentials: true,

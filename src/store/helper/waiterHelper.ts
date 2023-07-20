@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(function (config) {
 // GET WAITER HELPER
 const getWaiter = async (id: any) => {
   const { data } = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/waiters/${id}`,
+    `http://localhost:4000/api/waiters/${id}`,
     {
       withCredentials: true,
     }
@@ -31,7 +31,7 @@ const getWaiter = async (id: any) => {
 // GET WAITERS HELPER
 const getWaitersHelper = async () => {
   const { data } = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/waiters/',
+    'http://localhost:4000/api/waiters/',
     {
       withCredentials: true,
     }
@@ -42,7 +42,7 @@ const getWaitersHelper = async () => {
 // GET WAITERS BY SELLER HELPER
 const getWaitersBySellerIdHelper = async (id: any) => {
   const { data } = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/waiters/seller/${id}`,
+    `http://localhost:4000/api/waiters/seller/${id}`,
     {
       withCredentials: true,
     }
@@ -54,7 +54,7 @@ const getWaitersBySellerIdHelper = async (id: any) => {
 const addWaiterHelper = async (waiter: any) => {
   console.log(waiter);
   const { data } = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/waiters/`,
+    `http://localhost:4000/api/waiters/`,
     { waiter },
     {
       withCredentials: true,
@@ -67,7 +67,7 @@ const addWaiterHelper = async (waiter: any) => {
 const updateWaiterHelper = async (waiter: any) => {
   console.log(waiter);
   const { data } = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/waiters/${waiter._id}`,
+    `http://localhost:4000/api/waiters/${waiter._id}`,
     { waiter },
     {
       withCredentials: true,
@@ -80,7 +80,7 @@ const updateWaiterHelper = async (waiter: any) => {
 const deleteWaiterHelper = async (id: any) => {
   console.log(id);
   const { data } = await axiosInstance.delete(
-    `https://startup-service.onrender.com/api/waiters/${id}`,
+    `http://localhost:4000/api/waiters/${id}`,
     {
       withCredentials: true,
     }
