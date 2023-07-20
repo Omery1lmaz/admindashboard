@@ -134,24 +134,34 @@ const AddProduct = () => {
       .required('Price is required'),
     Category: Yup.array().required('Category Required'),
     Image: Yup.string().required('Resim seçmek zorunludur'),
-    inputListVariation: Yup.array().of(
-      Yup.object()
-        .required('requreired')
-        .shape({
-          name: Yup.string().min(3, 'min 3 harf olmalı'),
-          isRequired: Yup.boolean().required('Is Required field is required'),
-          products: Yup.array().of(
-            Yup.object().shape({
-              name: Yup.string().min(3, 'min 3 harf olmalı'),
-              price: Yup.number()
-                .required('Product price is required')
-                .positive('Price must be a positive number')
-                .integer('Price must be an integer')
-                .min(0, 'Price must be greater than or equal to 0'),
-            })
-          ),
-        })
-    ),
+    // @ts-expect-error
+    inputListVariation:
+      inputListVariation.length > 0
+        ? Yup.array().of(
+            Yup.object()
+              .required('requreired')
+              .shape({
+                name: Yup.string()
+                  .min(3, 'min 3 harf olmalı')
+                  .required('Product name is required'),
+                isRequired: Yup.boolean().required(
+                  'Is Required field is required'
+                ),
+                products: Yup.array().of(
+                  Yup.object().shape({
+                    name: Yup.string()
+                      .min(3, 'min 3 harf olmalı')
+                      .required('Product name is required'),
+                    price: Yup.number()
+                      .required('Product price is required')
+                      .positive('Price must be a positive number')
+                      .integer('Price must be an integer')
+                      .min(0, 'Price must be greater than or equal to 0'),
+                  })
+                ),
+              })
+          )
+        : null,
     Promotions: Yup.array().of(
       Yup.object()
         .required('requreired')
@@ -170,9 +180,6 @@ const AddProduct = () => {
   useEffect(() => {
     formData.append('Image', image);
   }, [image]);
-  useEffect(() => {
-    console.log(inputListVariation);
-  }, [inputListVariation]);
 
   const formData = new FormData();
 
@@ -197,10 +204,13 @@ const AddProduct = () => {
         }}
         validationSchema={validate}
         onSubmit={(values, { resetForm }) => {
+          console.log('onsubmit');
           const { Name, Description, Price, Category, Promotions } = values;
           formData.append('Name', Name);
           formData.append('Description', Description);
           formData.append('Category', JSON.stringify(Category));
+          formData.append('Image', image);
+
           const ids = inputList.map((group: any) =>
             group.map((item: any) => item._id)
           );
@@ -251,7 +261,7 @@ const AddProduct = () => {
               </h3>
             </div>
             <form onSubmit={formik.handleSubmit}>
-              {<span></span>}
+              {<span>{JSON.stringify(formik.errors.inputListVariation)}</span>}
               <div className="p-6.5">
                 <div className="mb-4.5 flex flex-col gap-6 ">
                   <div className="w-full ">
