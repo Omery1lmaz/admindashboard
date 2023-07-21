@@ -138,9 +138,15 @@ const AddProduct = () => {
       list[index].products[indexInside][name] = e.target.checked;
     } else {
       // @ts-expect-error
-      list[index].products[indexInside][name] = value;
+      list[index].products[indexInside]['name'] = value;
     }
-    setinputListVariation(list);
+    // name == 'price'
+    //   ? // @ts-expect-error
+    //     (list[index].products[indexInside][name] = parseInt(value))
+    //   : // @ts-expect-error
+    //     (list[index].products[indexInside][name] = value);
+    // // @ts-expect-error
+    // list.variations[index][name] = value;
   };
 
   const handleVariationNameChange = (e: any, index: number) => {
@@ -214,24 +220,34 @@ const AddProduct = () => {
       .required('Price is required'),
     Category: Yup.array().required('Category Required'),
     Image: Yup.string().required('Resim seçmek zorunludur'),
-    inputListVariation: Yup.array().of(
-      Yup.object()
-        .required('requreired')
-        .shape({
-          name: Yup.string().min(3, 'min 3 harf olmalı'),
-          isRequired: Yup.boolean().required('Is Required field is required'),
-          products: Yup.array().of(
-            Yup.object().shape({
-              name: Yup.string().min(3, 'min 3 harf olmalı'),
-              price: Yup.number()
-                .required('Product price is required')
-                .positive('Price must be a positive number')
-                .integer('Price must be an integer')
-                .min(0, 'Price must be greater than or equal to 0'),
-            })
-          ),
-        })
-    ),
+    // @ts-expect-error
+    inputListVariation:
+      inputListVariation.length > 0
+        ? Yup.array().of(
+            Yup.object()
+              .required('requreired')
+              .shape({
+                name: Yup.string()
+                  .min(3, 'min 3 harf olmalı')
+                  .required('Product name is required'),
+                isRequired: Yup.boolean().required(
+                  'Is Required field is required'
+                ),
+                products: Yup.array().of(
+                  Yup.object().shape({
+                    name: Yup.string()
+                      .min(3, 'min 3 harf olmalı')
+                      .required('Product name is required'),
+                    price: Yup.number()
+                      .required('Product price is required')
+                      .positive('Price must be a positive number')
+                      .integer('Price must be an integer')
+                      .min(0, 'Price must be greater than or equal to 0'),
+                  })
+                ),
+              })
+          )
+        : null,
     Promotions: Yup.array().of(
       Yup.object()
         .required('requreired')
@@ -279,6 +295,7 @@ const AddProduct = () => {
                 ? product.categories
                 : '',
             Promotions: [],
+            inputListVariation: inputListVariation,
           }}
           validationSchema={validate}
           onSubmit={(values, { resetForm }) => {
@@ -386,101 +403,154 @@ const AddProduct = () => {
                       {inputListVariation.map((x, i) => {
                         return (
                           <div className="row mb-3">
-                            <div className="w-full xl:w-1/2">
+                            <div className="w-full ">
                               <label className="mb-2.5 block text-black dark:text-white">
                                 Variation name
                               </label>
                               <input
                                 type="text"
                                 name={`inputListVariation[${i}].name`}
-                                defaultValue={x['name']}
-                                value={formik.values.inputListVariation[i].name}
-                                placeholder="Enter First Name"
+                                placeholder="Enter Variation Name"
+                                onBlur={formik.handleBlur}
+                                value={inputListVariation[i].name}
                                 onChange={(e) => {
                                   handleVariationNameChange(e, i);
-                                  console.log(
-                                    e.target.name,
-                                    formik.values.inputListVariation
-                                  );
                                   formik.handleChange(e);
                                 }}
                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                               />
                             </div>
-                            <div className="my-1 w-full xl:w-1/2">
-                              <label className="mb-2.5 text-black dark:text-white">
+                            {formik.touched.inputListVariation &&
+                              formik.touched.inputListVariation[i] &&
+                              formik.errors.inputListVariation &&
+                              formik.errors.inputListVariation[i] &&
+                              formik.errors.inputListVariation[i].name && (
+                                <div className="error">
+                                  * {formik.errors.inputListVariation[i].name}
+                                </div>
+                              )}
+                            <div className="my-2 w-full ">
+                              <label className="mb-2.5  text-black dark:text-white">
                                 Is Required :
                               </label>
                               <input
                                 type="checkbox"
                                 name="isRequired"
-                                defaultValue={x['isRequired']}
+                                className="ml-3"
                                 placeholder="Enter  Name"
                                 onChange={(e) =>
                                   handleVariationNameChange(e, i)
                                 }
-                                className="ml-3"
                               />
                             </div>
-
                             {
                               // @ts-expect-error
                               x.products.map((y: any, u: number) => {
                                 return (
                                   <>
-                                    <div className="w-full xl:w-1/2">
+                                    <div className="w-full">
                                       <label className="mb-2.5 block text-black dark:text-white">
                                         Product Name
                                       </label>
                                       <input
                                         type="text"
-                                        name="name"
-                                        defaultValue={y['name']}
+                                        name={`inputListVariation[${i}].products[${u}].name`}
                                         placeholder="Enter Name"
-                                        onChange={(e) =>
-                                          handleinputchangeVariation(e, i, u)
-                                        }
+                                        onBlur={formik.handleBlur}
+                                        onChange={(e) => {
+                                          formik.handleChange(e);
+                                          handleinputchangeVariation(e, i, u);
+                                        }}
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                       />
                                     </div>
-                                    <div className="w-full xl:w-1/2">
+                                    {formik.touched.inputListVariation &&
+                                      formik.touched.inputListVariation[i] &&
+                                      formik.touched.inputListVariation[i]
+                                        .products &&
+                                      formik.touched.inputListVariation[i]
+                                        .products[u] &&
+                                      formik.errors.inputListVariation &&
+                                      formik.errors.inputListVariation[i] &&
+                                      formik.errors.inputListVariation[i]
+                                        .products &&
+                                      formik.errors.inputListVariation[i]
+                                        .products[u] &&
+                                      formik.errors.inputListVariation[i]
+                                        .products[u].name && (
+                                        <div className="error">
+                                          {
+                                            formik.errors.inputListVariation[i]
+                                              .products[u].name
+                                          }
+                                        </div>
+                                      )}
+
+                                    <div className="w-full ">
                                       <label className="mb-2.5 block text-black dark:text-white">
                                         Product Price
                                       </label>
                                       <input
-                                        type="text"
-                                        name="price"
-                                        defaultValue={y['price']}
+                                        type="number"
+                                        name={`inputListVariation[${i}].products[${u}].price`}
                                         placeholder="Enter Price"
-                                        onChange={(e) =>
-                                          handleinputchangeVariation(e, i, u)
+                                        onBlur={formik.handleBlur}
+                                        value={
+                                          inputListVariation[i].products[u]
+                                            .price
                                         }
+                                        onChange={(e) => {
+                                          formik.handleChange(e);
+                                          e.target.name = 'price';
+                                          handleinputchangeVariation(e, i, u);
+                                        }}
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                       />
                                     </div>
-                                    <div className="row my-1 mb-3">
-                                      <div className="w-full xl:w-1/2">
-                                        <label className="mb-2.5 text-black dark:text-white">
+                                    {formik.touched.inputListVariation &&
+                                      formik.touched.inputListVariation[i] &&
+                                      formik.touched.inputListVariation[i]
+                                        .products &&
+                                      formik.touched.inputListVariation[i]
+                                        .products[u] &&
+                                      formik.errors.inputListVariation &&
+                                      formik.errors.inputListVariation[i] &&
+                                      formik.errors.inputListVariation[i]
+                                        .products &&
+                                      formik.errors.inputListVariation[i]
+                                        .products[u] &&
+                                      formik.errors.inputListVariation[i]
+                                        .products[u].price && (
+                                        <div className="error">
+                                          {
+                                            formik.errors.inputListVariation[i]
+                                              .products[u].price
+                                          }
+                                        </div>
+                                      )}
+                                    <div className="row mb-3">
+                                      <div className="my-2 w-full">
+                                        <label className="mb-2.5  text-black dark:text-white">
                                           Is Selected :
                                         </label>
                                         <input
                                           type="checkbox"
                                           name="isSelected"
+                                          className="ml-3"
                                           onChange={(e) =>
                                             handleinputchangeVariation(e, i, u)
                                           }
-                                          className="ml-3"
                                         />
                                       </div>
                                     </div>
                                     <div className="form-group col-md-2 mt-4">
                                       <button
-                                        className="flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 text-white hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50"
+                                        className="mt-2 flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 text-white hover:bg-opacity-50 dark:border-strokedark dark:hover:bg-opacity-50"
                                         onClick={(e) =>
                                           handleRemoveInside(e, i, u)
                                         }
                                       >
-                                        Remove
+                                        Remove Product
                                       </button>
                                     </div>
                                   </>
@@ -489,7 +559,7 @@ const AddProduct = () => {
                             }
                             <div className="form-group col-md-2 mt-4">
                               <button
-                                className="flex min-w-42.5 items-center justify-center rounded-lg border  border-stroke bg-meta-3 p-2 text-white hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50"
+                                className="mt-2 flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-3 p-2 text-white hover:bg-opacity-50 dark:border-strokedark dark:hover:bg-opacity-50"
                                 onClick={(e) => handleaddclickVariation(e, i)}
                               >
                                 Add Variation
@@ -497,17 +567,17 @@ const AddProduct = () => {
                             </div>
                             <div className="form-group col-md-2 mt-4">
                               <button
-                                className="flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 text-white hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50"
+                                className="mt-2 flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 text-white hover:bg-opacity-50 dark:border-strokedark dark:hover:bg-opacity-50"
                                 onClick={() => handleremoveVariation(i)}
                               >
-                                Remove
+                                Remove Variation
                               </button>
                             </div>
                           </div>
                         );
                       })}
                       <button
-                        className="flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-meta-3 p-2 text-white hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50"
+                        className="flex min-w-42.5 items-center justify-center rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                         onClick={handleaddclickVariationList}
                       >
                         Add More

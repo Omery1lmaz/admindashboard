@@ -500,13 +500,9 @@ const AddProduct = () => {
                             name={`inputListVariation[${i}].name`}
                             placeholder="Enter Variation Name"
                             onBlur={formik.handleBlur}
-                            value={formik.values.inputListVariation[i].name}
+                            value={inputListVariation[i].name}
                             onChange={(e) => {
                               handleVariationNameChange(e, i);
-                              console.log(
-                                e.target.name,
-                                formik.values.inputListVariation
-                              );
                               formik.handleChange(e);
                             }}
                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
@@ -599,9 +595,6 @@ const AddProduct = () => {
                                         inputListVariation[i].products[u].price;
                                       console.log(e.target.value);
                                       formik.handleChange(e);
-                                      console.log(
-                                        formik.values.inputListVariation
-                                      );
                                     }}
                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                   />
