@@ -4,11 +4,19 @@ import DarkModeSwitcher from './DarkModeSwitcher';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useDispatch, useSelector } from 'react-redux';
+import { sellerWorkingStatus } from '../store/authenticationSlices';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+  const { user } = useSelector(
+    // @ts-expect-error
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between  py-4 px-4 shadow-2 md:px-6 2xl:px-11">
@@ -63,8 +71,35 @@ const Header = (props: {
 
         <div className="ml-auto flex items-center !justify-end gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
-            {/* <!-- Dark Mode Toggler --> */}
-            <DarkModeSwitcher />
+            <div>{JSON.stringify(user.isWorking)}</div>
+            <div className="col-span-1 flex items-center">
+              <div className="flex items-center justify-center gap-2">
+                <ul>
+                  <li className="list-none ">
+                    <label
+                      className={`relative m-0 block h-7.5 w-14 rounded-full ${
+                        user.isWorking ? 'bg-meta-3' : 'bg-meta-1'
+                      }`}
+                      onClick={() => {}}
+                    >
+                      <input
+                        type="checkbox"
+                        onChange={() => {
+                          dispatch(sellerWorkingStatus(user.isWorking));
+                        }}
+                        className="dur absolute top-0 z-50 m-0 h-full w-full cursor-pointer opacity-0"
+                      />
+                      <span
+                        className={`absolute top-1/2 left-[3px] flex h-6 w-6 -translate-y-1/2 translate-x-0 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ${
+                          user.isWorking && '!right-[3px] !translate-x-full'
+                        }`}
+                      ></span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             {/* <!-- Dark Mode Toggler --> */}
           </ul>
 

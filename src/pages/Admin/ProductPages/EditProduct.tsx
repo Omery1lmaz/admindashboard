@@ -3,6 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Multiselect from 'multiselect-react-dropdown';
 import { Formik } from 'formik';
+import produce from 'immer';
 
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
@@ -73,20 +74,16 @@ const AddProduct = () => {
     dispatch(getPromotionsBySeller());
   }, []);
   useEffect(() => {
-    if (
-      product.name &&
-      inputList.length == 0 &&
-      product.variations.length !== 0
-    ) {
+    if (product?.name && inputList.length == 0) {
       setinputListVariation(product.variations);
     }
     if (
-      product.name &&
+      product?.name &&
       inputList.length == 0 &&
       product.promotions.length !== 0
     ) {
       setinputList(
-        product.promotions.map((t) => {
+        product.promotions.map((t: any) => {
           return {
             _id: t._id,
             name: t.variation.name,
@@ -128,36 +125,41 @@ const AddProduct = () => {
     index: number,
     indexInside: number
   ) => {
-    const { name, value } = e.target;
-    const list = [...inputListVariation];
-    if (name == 'price') {
-      // @ts-expect-error
-      list[index].products[indexInside][name] = parseInt(value);
-    } else if (name == 'isSelected') {
-      // @ts-expect-error
-      list[index].products[indexInside][name] = e.target.checked;
-    } else {
-      // @ts-expect-error
-      list[index].products[indexInside]['name'] = value;
-    }
-    // name == 'price'
-    //   ? // @ts-expect-error
-    //     (list[index].products[indexInside][name] = parseInt(value))
-    //   : // @ts-expect-error
-    //     (list[index].products[indexInside][name] = value);
-    // // @ts-expect-error
-    // list.variations[index][name] = value;
+    const { name, value, type, checked } = e.target;
+    console.log('name', name, type);
+    setinputListVariation((prevList) => {
+      return produce(prevList, (draftList) => {
+        const vDeepCopy = draftList[index].products[indexInside];
+
+        if (type === 'checkbox') {
+          vDeepCopy[name] = checked;
+        } else if (type === 'number') {
+          vDeepCopy['price'] = parseInt(value);
+        } else {
+          vDeepCopy['name'] = value;
+        }
+      });
+    });
   };
 
   const handleVariationNameChange = (e: any, index: number) => {
     const { name, value } = e.target;
-    const list = [...inputListVariation];
-    name == 'isRequired'
-      ? // @ts-expect-error
-        (list[index][name] = e.target.checked)
-      : // @ts-expect-error
-        (list[index]['name'] = value);
-    // list[index][name] = value;
+    const list: any = [...inputListVariation]; // Make a shallow copy of the array of objects
+
+    // Update the specific object in the array
+    const updatedObject = {
+      ...list[index], // Make a shallow copy of the object at the specified index
+    };
+    if (name == 'isRequired') {
+      updatedObject[name] = e.target.checked;
+    } else {
+      updatedObject['name'] = value;
+    }
+
+    console.log(updatedObject);
+    // Replace the old object with the updated object in the copied array
+    list[index] = updatedObject;
+    // Update the state with the modified array
     setinputListVariation(list);
   };
   const handleremoveVariation = (index: any) => {
@@ -196,10 +198,8 @@ const AddProduct = () => {
     e.preventDefault();
   };
   const handleaddclickVariation = (e: any, i: number) => {
-    const list = [...inputListVariation];
-    // @ts-expect-error
+    const list: any = [...inputListVariation];
     const t = [...list[i].products, { name: '', price: 0, isSelected: false }];
-    // @ts-expect-error
     list[i] = {
       name: list[i].name,
       products: t,
@@ -219,7 +219,6 @@ const AddProduct = () => {
       .integer()
       .required('Price is required'),
     Category: Yup.array().required('Category Required'),
-    Image: Yup.string().required('Resim seçmek zorunludur'),
     // @ts-expect-error
     inputListVariation:
       inputListVariation.length > 0
@@ -230,9 +229,7 @@ const AddProduct = () => {
                 name: Yup.string()
                   .min(3, 'min 3 harf olmalı')
                   .required('Product name is required'),
-                isRequired: Yup.boolean().required(
-                  'Is Required field is required'
-                ),
+                isRequired: Yup.boolean(),
                 products: Yup.array().of(
                   Yup.object().shape({
                     name: Yup.string()
@@ -280,7 +277,7 @@ const AddProduct = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Add Product" />
-      {isLoadingP || !product.name || !product.categories ? (
+      {isLoadingP || !product || !product.name || !product.categories ? (
         <div>Bekleyiniz...</div>
       ) : (
         <Formik
@@ -337,15 +334,6 @@ const AddProduct = () => {
                 </h3>
               </div>
               <form onSubmit={formik.handleSubmit}>
-                {
-                  <span>
-                    {formik.errors.Category ||
-                      formik.errors.Description ||
-                      formik.errors.Name ||
-                      formik.errors.Price ||
-                      formik.errors.Promotions}
-                  </span>
-                }
                 <div className="p-6.5">
                   <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                     <div className="col-sm-12">
@@ -457,6 +445,9 @@ const AddProduct = () => {
                                         name={`inputListVariation[${i}].products[${u}].name`}
                                         placeholder="Enter Name"
                                         onBlur={formik.handleBlur}
+                                        value={
+                                          inputListVariation[i].products[u].name
+                                        }
                                         onChange={(e) => {
                                           formik.handleChange(e);
                                           handleinputchangeVariation(e, i, u);
@@ -500,9 +491,8 @@ const AddProduct = () => {
                                             .price
                                         }
                                         onChange={(e) => {
-                                          formik.handleChange(e);
-                                          e.target.name = 'price';
                                           handleinputchangeVariation(e, i, u);
+                                          formik.handleChange(e);
                                         }}
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                       />
@@ -675,6 +665,7 @@ const AddProduct = () => {
 
                   <button
                     type="submit"
+                    onClick={() => console.log(formik.errors)}
                     className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
                   >
                     Edit Product

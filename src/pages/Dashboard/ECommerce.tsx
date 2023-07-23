@@ -186,7 +186,7 @@ const ECommerce = () => {
         <CardOne
           title={'Total Tip'}
           price={
-            adminDashBoard.totalTipCost ? (
+            adminDashBoard.totalTipCost >= 0 ? (
               <span>{adminDashBoard.totalTipCost} TL</span>
             ) : (
               <LinearIndeterminate />

@@ -11,6 +11,27 @@ import {
 const userString = localStorage.getItem('user');
 const user = userString !== null ? JSON.parse(userString) : null;
 
+export const sellerWorkingStatus = createAsyncThunk(
+  'updateSellerWorkingStatus',
+  async (isWorking, thunkAPI) => {
+    try {
+      const response = await authService.sellerWorkingStatus(isWorking);
+      thunkAPI.dispatch(changeSellerWorkingStatus(response));
+      successNotification('Mağaza durumunuz başarıyla güncellendi');
+      return response;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 // Login User
 export const loginUser = createAsyncThunk(
   'loginUser',
@@ -286,6 +307,11 @@ const authSlice = createSlice({
       state.user = null;
       state.userDetail = null;
     },
+    changeSellerWorkingStatus(state: State, action) {
+      console.log('action', action);
+      const v = { ...user, isWorking: action.payload };
+      state.user = v;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -421,6 +447,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { deleteUser } = authSlice.actions;
+export const { deleteUser, changeSellerWorkingStatus } = authSlice.actions;
 
 export default authSlice.reducer;

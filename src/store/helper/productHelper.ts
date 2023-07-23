@@ -138,10 +138,15 @@ const getCategoryByIdHelper = async ({ id }: any) => {
   return response.data;
 };
 const updateProductsImage = async ({ id, formData }: any) => {
-  const response: any = await axiosInstance.post(
+  const token = Cookies.get('token');
+  const response: any = await axios.post(
     `http://localhost:4000/api/products/image/${id}`,
     formData,
-    { withCredentials: true }
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   return response.data;

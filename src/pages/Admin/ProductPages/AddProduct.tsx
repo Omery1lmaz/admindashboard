@@ -124,8 +124,15 @@ const AddProduct = () => {
   };
 
   const [image, setImage] = useState();
+  const [showImage, setShowImage] = useState<any>();
+  useEffect(() => {
+    image && setShowImage(URL.createObjectURL(image as any));
+  }, [image]);
+
   const validate = Yup.object({
-    Name: Yup.string().required('Name is required'),
+    Name: Yup.string()
+      .required('Name is required')
+      .min(3, 'minimum 3 karakter olmalıdır'),
     Description: Yup.string().required('Description is required'),
     Price: Yup.number('Ürün fiyatı harf içermemelidir')
       .min(1, 'Fiyat 1 ya da daha yüksek olmalıdır')
@@ -144,9 +151,7 @@ const AddProduct = () => {
                 name: Yup.string()
                   .min(3, 'min 3 harf olmalı')
                   .required('Product name is required'),
-                isRequired: Yup.boolean().required(
-                  'Is Required field is required'
-                ),
+                isRequired: Yup.boolean(),
                 products: Yup.array().of(
                   Yup.object().shape({
                     name: Yup.string()
@@ -259,6 +264,7 @@ const AddProduct = () => {
               <h3 className="font-medium text-black dark:text-white">
                 Add Product Form
               </h3>
+              {image && <img src={showImage} alt="Seçilen Resim" />}
             </div>
             <form onSubmit={formik.handleSubmit}>
               {<span>{JSON.stringify(formik.errors.inputListVariation)}</span>}

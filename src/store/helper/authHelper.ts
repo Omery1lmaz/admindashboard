@@ -35,6 +35,14 @@ const login = async (user: any) => {
   return response.data;
 };
 
+const sellerWorkingStatus = async (isWorking: any) => {
+  const response = await axiosInstance.post(
+    'http://localhost:4000/api/admin/is-working',
+    { isWorking: !isWorking }
+  );
+  return response.data;
+};
+
 const getInfoHelper = async () => {
   const response = await axiosInstance.get(
     'http://localhost:4000/api/users/info',
@@ -53,7 +61,7 @@ const getSellerInfoHelper = async (id: any) => {
 
 const updateUserProfileHelper = async (profile: any) => {
   const response = await axiosInstance.post(
-    'http://localhost:4000/api/users/profile',
+    'http://localhost:4000/api/admin/profile',
     { profile: profile },
     { withCredentials: true }
   );
@@ -166,6 +174,7 @@ const GetSellers = async () => {
 
 const authService = {
   login,
+  sellerWorkingStatus,
   GetUserDetails,
   register,
   resetPasswordLink,
