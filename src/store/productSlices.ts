@@ -46,8 +46,11 @@ export const updateOrderStatus = createAsyncThunk(
   '/updateOrderStatus',
   async ({ id, status }: any, thunkAPI) => {
     try {
+      console.log(id, 'id');
       const response = await productService.UpdateOrderStatus({ id, status });
-      successNotification('Sipariş Durumu BAşarıyla Güncellendi');
+      successNotification('Sipariş Durumu Başarıyla Güncellendi');
+      const t = { id, status };
+      thunkAPI.dispatch(updateOrders(response)); // Remove 'await' from this line
       return response;
     } catch (error: any) {
       const message =
@@ -61,7 +64,6 @@ export const updateOrderStatus = createAsyncThunk(
     }
   }
 );
-
 export const createOrder = createAsyncThunk(
   '/createOrder',
   async (
@@ -552,6 +554,8 @@ interface InitialState {
   messageP: string;
   products: any[];
   orders: any[];
+  confirmedOrders: any[];
+  preparedOrders: any[];
   order: any;
   product: any;
   sellerProducts: any[];
@@ -568,6 +572,8 @@ const initialState: InitialState = {
   messageP: '',
   products: [],
   orders: [],
+  confirmedOrders: [],
+  preparedOrders: [],
   order: {},
   product: {},
   sellerProducts: [],
@@ -598,6 +604,18 @@ const productSlice = createSlice({
       newProducts[index].isActive = product.isActive;
       state.sellerProducts = [...newProducts];
     },
+    updateOrders(state: InitialState, action) {
+      const v = action.payload;
+      console.log('najndfjnajf', v);
+      const preparedOrders = v.filter((order: any) => {
+        return order.isReady == 'InProgress';
+      });
+      const confirmedOrders = v.filter((order: any) => {
+        return order.isReady == 'Not Approved';
+      });
+      state.preparedOrders = preparedOrders;
+      state.confirmedOrders = confirmedOrders;
+    },
   },
 
   extraReducers: (builder) => {
@@ -615,6 +633,15 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(getOrderBySellerWithLimit.fulfilled, (state, action) => {
+        const v = action.payload;
+        const preparedOrders = v.filter((order: any) => {
+          return order.isReady == 'InProgress';
+        });
+        const confirmedOrders = v.filter((order: any) => {
+          return order.isReady == 'Not Approved';
+        });
+        state.preparedOrders = preparedOrders;
+        state.confirmedOrders = confirmedOrders;
         state.isLoadingP = false;
         state.orders = action.payload;
       })
@@ -693,9 +720,19 @@ const productSlice = createSlice({
         state.isLoadingP = true;
       })
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        // const index = state.orders.findIndex(
+        //   (order: any) => order._id == action.payload.id
+        // );
+        // const deepCopyArray = [...state.orders];
+        // deepCopyArray[index] = {
+        //   ...deepCopyArray[index],
+        //   isReady: action.payload.status,
+        // };
+        // state.orders = [...deepCopyArray];
         state.isLoadingP = false;
       })
       .addCase(updateOrderStatus.rejected, (state, action) => {
+        console.log(action.payload);
         state.isErrorP = true;
         state.isSuccessP = false;
         state.isLoadingP = false;
@@ -921,6 +958,7 @@ const productSlice = createSlice({
       });
   },
 });
-export const { addOrder, updateProductIsActive } = productSlice.actions;
+export const { addOrder, updateProductIsActive, updateOrders } =
+  productSlice.actions;
 
 export default productSlice.reducer;

@@ -49,6 +49,7 @@ const getAdminDashboardInf = async ({ query }: any) => {
 };
 
 const UpdateOrderStatus = async ({ id, status }: any) => {
+  console.log(id, 'id');
   const response = await axiosInstance.put(
     `http://localhost:4000/api/orders/order/${id}`,
     { status },

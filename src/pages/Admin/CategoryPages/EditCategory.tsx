@@ -16,7 +16,9 @@ const EditCategory = () => {
   const { id } = useParams();
 
   const validate = Yup.object({
-    name: Yup.string().required('name is required'),
+    name: Yup.string()
+      .min(3, 'minimum 3 karakter olmalıdır')
+      .required('name is required'),
   });
   const { isLoadingP, category } = useSelector(
     // @ts-expect-error
@@ -70,6 +72,9 @@ const EditCategory = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
+                    {formik.errors.name && formik.touched.name ? (
+                      <div className="error">* {formik.errors.name}</div>
+                    ) : null}
                   </div>
                   <button
                     type="submit"

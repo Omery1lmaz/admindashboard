@@ -71,27 +71,27 @@ const Header = (props: {
 
         <div className="ml-auto flex items-center !justify-end gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
-            <div>{JSON.stringify(user.isWorking)}</div>
+            <div>{JSON.stringify(user?.isWorking)}</div>
             <div className="col-span-1 flex items-center">
               <div className="flex items-center justify-center gap-2">
                 <ul>
                   <li className="list-none ">
                     <label
                       className={`relative m-0 block h-7.5 w-14 rounded-full ${
-                        user.isWorking ? 'bg-meta-3' : 'bg-meta-1'
+                        user?.isWorking ? 'bg-meta-3' : 'bg-meta-1'
                       }`}
                       onClick={() => {}}
                     >
                       <input
                         type="checkbox"
                         onChange={() => {
-                          dispatch(sellerWorkingStatus(user.isWorking));
+                          dispatch(sellerWorkingStatus(user?.isWorking));
                         }}
                         className="dur absolute top-0 z-50 m-0 h-full w-full cursor-pointer opacity-0"
                       />
                       <span
                         className={`absolute top-1/2 left-[3px] flex h-6 w-6 -translate-y-1/2 translate-x-0 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ${
-                          user.isWorking && '!right-[3px] !translate-x-full'
+                          user?.isWorking && '!right-[3px] !translate-x-full'
                         }`}
                       ></span>
                     </label>
