@@ -269,6 +269,14 @@ const getOrderBySellerWithLimit = async ({ skip, limit, query }: any) => {
   );
   return response.data;
 };
+const getOrderRecords = async ({ skip, limit, query }: any) => {
+  const response: any = await axiosInstance.put(
+    `http://localhost:4000/api/orders/order/seller/finance`,
+    { query },
+    { withCredentials: true }
+  );
+  return response.data;
+};
 
 const getCatsHelper = async () => {
   const response = await axiosInstance.get(
@@ -313,5 +321,6 @@ const productService = {
   getPromotionsBySeller,
   createTip,
   updateProductP,
+  getOrderRecords,
 };
 export default productService;

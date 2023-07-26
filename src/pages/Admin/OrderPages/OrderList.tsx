@@ -87,7 +87,9 @@ const OrderList = () => {
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
   const [vOrders, setVOrders] = useState<[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState({
+    isReady: { $in: ['Delivered', 'Cancel'] },
+  });
   const [limit, setLimit] = useState(10);
   const handleOpen = () => setOpen(true);
   const handleOpenFilter = () => setFilterOpen(true);
@@ -401,7 +403,6 @@ const OrderList = () => {
                                   dispatch(
                                     // @ts-expect-error
                                     updateOrderStatus({
-                                      // @ts-expect-error
                                       id: order._id,
                                       status: 'Not Started',
                                     })
@@ -439,7 +440,6 @@ const OrderList = () => {
                                   dispatch(
                                     // @ts-expect-error
                                     updateOrderStatus({
-                                      // @ts-expect-error
                                       id: order._id,
                                       status: 'Ready',
                                     })

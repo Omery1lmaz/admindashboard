@@ -36,6 +36,7 @@ import AddPromosyon from './pages/Admin/PromosyonPages/AddPromosyon';
 import PromosyonList from './pages/Admin/PromosyonPages/PromosyonList';
 import Printer from './pages/Admin/Printer/Printer';
 import ActiveOrders from './pages/Admin/OrderPages/ActiveOrders';
+import OrderRecords from './pages/Admin/Invoices/OrderRecords';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
@@ -84,6 +85,10 @@ function App() {
       <Routes>
         <Route path="/" element={<GuardedRoute component={ECommerce} />} />
         <Route path="/buttons" element={<GuardedRoute component={Buttons} />} />
+        <Route
+          path="/payment/order-records"
+          element={<GuardedRoute component={OrderRecords} />}
+        />
 
         <Route
           path="/add-product"

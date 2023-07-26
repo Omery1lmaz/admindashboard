@@ -8,6 +8,42 @@ import {
   errorNotification,
   successNotification,
 } from '../services/notificationHelper';
+function groupOrdersByDate(orderRecords) {
+  const groupedOrders = {};
+
+  orderRecords.forEach((order) => {
+    const date = new Date(order.date).toISOString().split('T')[0]; // Yalnızca tarih kısmını alır (yyyy-mm-dd)
+
+    // Eğer tarihe ait bir grup yoksa oluştur
+    if (!groupedOrders[date]) {
+      groupedOrders[date] = {
+        orders: [order],
+        totalOrders: 1,
+        totalAmount: order.totalPrice,
+        totalCancelledAmount: order.isReady === 'Cancel' ? order.totalPrice : 0,
+      };
+    } else {
+      // Eğer tarihe ait bir grup varsa mevcut gruba ekle
+      groupedOrders[date].orders.push(order);
+      groupedOrders[date].totalOrders += 1;
+      groupedOrders[date].totalAmount += order.totalPrice;
+      groupedOrders[date].totalCancelledAmount +=
+        order.isReady === 'Cancel' ? order.totalPrice : 0;
+    }
+  });
+
+  // Sonuçları bir array'e çevir
+  const resultArray = Object.entries(groupedOrders).map(([date, data]) => ({
+    date,
+    totalOrders: data.totalOrders,
+    totalAmount: data.totalAmount,
+    totalCancelledAmount: data.totalCancelledAmount,
+    orders: data.orders,
+  }));
+
+  return resultArray;
+}
+
 export const getCategories = createAsyncThunk(
   '/getCategories',
   async (thunkAPI: any) => {
@@ -454,16 +490,33 @@ export const getProductsBySellerLimit = createAsyncThunk(
 
 export const getOrderBySellerWithLimit = createAsyncThunk(
   '/getOrderBySellerWithLimit',
-  async ({ skip, limit, query }: any, thunkAPI) => {
-    console.log(limit, 'limit');
-    const v = skip === 1 ? 0 : skip * 10 - 10;
+  async ({ skip = 0, limit = 0, query }: any, thunkAPI) => {
     try {
       const res = await productService.getOrderBySellerWithLimit({
         skip,
         limit,
         query,
       });
-      console.log(res[0], 'v');
+      return res;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getOrderRecords = createAsyncThunk(
+  '/getOrderRecords',
+  async ({ query }: any, thunkAPI) => {
+    try {
+      const res = await productService.getOrderRecords({
+        query,
+      });
       return res;
     } catch (error: any) {
       const message =
@@ -482,10 +535,6 @@ export const addProduct = createAsyncThunk(
   '/addProduct',
   async ({ product, formData }: any, thunkAPI) => {
     try {
-      for (var key of formData.entries()) {
-        console.log(JSON.stringify(key[0]) + ', ' + JSON.stringify(key[1]));
-      }
-
       const v = await productService.addProduct({ product, formData });
       successNotification('Product başarıyla güncellendi');
     } catch (error: any) {
@@ -556,8 +605,10 @@ interface InitialState {
   orders: any[];
   confirmedOrders: any[];
   preparedOrders: any[];
+  readyOrders: any[];
   order: any;
   product: any;
+  orderRecords: any;
   sellerProducts: any[];
   adminDashBoard: any;
 }
@@ -574,6 +625,8 @@ const initialState: InitialState = {
   orders: [],
   confirmedOrders: [],
   preparedOrders: [],
+  orderRecords: [],
+  readyOrders: [],
   order: {},
   product: {},
   sellerProducts: [],
@@ -613,6 +666,9 @@ const productSlice = createSlice({
       const confirmedOrders = v.filter((order: any) => {
         return order.isReady == 'Not Approved';
       });
+      const readyOrders = v.filter((order: any) => {
+        return order.isReady == 'Not Approved';
+      });
       state.preparedOrders = preparedOrders;
       state.confirmedOrders = confirmedOrders;
     },
@@ -640,8 +696,12 @@ const productSlice = createSlice({
         const confirmedOrders = v.filter((order: any) => {
           return order.isReady == 'Not Approved';
         });
+        const readyOrders = v.filter((order: any) => {
+          return order.isReady == 'Ready';
+        });
         state.preparedOrders = preparedOrders;
         state.confirmedOrders = confirmedOrders;
+        state.readyOrders = readyOrders;
         state.isLoadingP = false;
         state.orders = action.payload;
       })
@@ -717,6 +777,22 @@ const productSlice = createSlice({
         state.messageP = action.payload as any;
       })
       .addCase(getOrderById.pending, (state, action) => {
+        state.isLoadingP = true;
+      })
+
+      .addCase(getOrderRecords.fulfilled, (state, action) => {
+        state.isLoadingP = false;
+        const groupedOrders = groupOrdersByDate(action.payload); // Verileri tarihlerine göre grupla
+        state.orderRecords = groupedOrders; // state'i güncelle
+        console.log(typeof state.orderRecords);
+      })
+      .addCase(getOrderRecords.rejected, (state, action) => {
+        state.isErrorP = true;
+        state.isSuccessP = false;
+        state.isLoadingP = false;
+        state.messageP = action.payload as any;
+      })
+      .addCase(getOrderRecords.pending, (state, action) => {
         state.isLoadingP = true;
       })
       .addCase(updateOrderStatus.fulfilled, (state, action) => {

@@ -88,7 +88,7 @@ const ActiveOrders = () => {
   const [vOrders, setVOrders] = useState<[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState({
-    isReady: { $ne: 'Ready' },
+    isReady: { $ne: 'Delivered' },
   });
 
   const [limit, setLimit] = useState(10);
@@ -101,9 +101,8 @@ const ActiveOrders = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  let { orders, confirmedOrders, preparedOrders, isLoadingP } = useSelector(
-    (state: any) => state.product
-  );
+  let { orders, confirmedOrders, preparedOrders, isLoadingP, readyOrders } =
+    useSelector((state: any) => state.product);
   const getOrders = () => {
     const intActivePAge = activePage - 1;
     dispatch(
@@ -273,7 +272,7 @@ const ActiveOrders = () => {
       </div>
       <div className="my-3 rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="max-w-full overflow-x-auto">
-          <h2 className="text-lg">Confirmed Orders</h2>
+          <h2 className="text-lg">Preparing Orders</h2>
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
@@ -354,7 +353,13 @@ const ActiveOrders = () => {
                       <td className="flex gap-1 border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <button
                           onClick={() => {
-                            handleOpen();
+                            dispatch(
+                              // @ts-expect-error
+                              updateOrderStatus({
+                                id: order._id,
+                                status: 'Ready',
+                              })
+                            );
                           }}
                           className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                         >
@@ -390,26 +395,130 @@ const ActiveOrders = () => {
           )}
         </div>
       </div>
+      <div className="my-3 rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="max-w-full overflow-x-auto">
+          <h2 className="text-lg">Ready Orders</h2>
+          <table className="w-full table-auto">
+            <thead>
+              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  Date
+                </th>
+                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  Name
+                </th>
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  Table
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Ago
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Status
+                </th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {!isLoadingP &&
+                readyOrders?.map((order: any, index: number) => {
+                  let date = new Date(order.date);
 
-      <div className="mt-2 flex justify-end gap-2">
-        <button
-          onClick={() => {
-            activePage >= 2 && setActivePage(activePage - 1);
-          }}
-          disabled={activePage === 1}
-          className="flex items-center justify-center rounded-lg  border border-stroke bg-gray p-2 hover:bg-opacity-50 disabled:bg-primary dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
-        >
-          Prev Page
-        </button>
-        <button
-          disabled={orders.length < limit}
-          onClick={() => {
-            setActivePage(activePage + 1);
-          }}
-          className="flex items-center justify-center  rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
-        >
-          Next Page
-        </button>
+                  let day = date.getDate(); // gün
+                  let month = date.getMonth() + 1; // ay (0-11 arası olduğu için 1 ekliyoruz)
+                  let year = date.getFullYear(); // yıl
+                  let hour = date.getHours(); // saat
+                  let minute = date.getMinutes(); // dakika
+                  let second = date.getSeconds(); // saniye
+                  const time =
+                    day +
+                    '.' +
+                    month +
+                    '.' +
+                    year +
+                    ' ' +
+                    hour +
+                    ':' +
+                    minute +
+                    ':' +
+                    second;
+
+                  return (
+                    <tr>
+                      <td
+                        key={index}
+                        className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11"
+                      >
+                        <h5 className="font-medium text-black dark:text-white">
+                          {time}
+                        </h5>
+                        <p className="text-sm">{order.totalPrice} TL</p>
+                      </td>
+                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        <p className="text-black dark:text-white">
+                          {order.name}
+                        </p>
+                      </td>
+                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        <p className="text-black dark:text-white">
+                          {order.shippingAddress.table}
+                        </p>
+                        {/* <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
+                        Paid
+                      </p> */}
+                      </td>
+                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        {moment(order.date).fromNow()}
+                      </td>
+                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        {order.isReady}
+                      </td>
+                      <td className="flex gap-1 border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        <button
+                          onClick={() => {
+                            dispatch(
+                              // @ts-expect-error
+                              updateOrderStatus({
+                                id: order._id,
+                                status: 'Delivered',
+                              })
+                            );
+                          }}
+                          className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+                        >
+                          Teslim Edildi
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleOpenODetailModal();
+                            setSelectedOrder(order);
+                          }}
+                          className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
+                        >
+                          Detay
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+
+          {readyOrders.length == 0 && !isLoadingP && (
+            <div className="flex h-[150px]  w-full items-center justify-center xl:p-5">
+              <h2 className="text-center text-lg font-semibold text-black dark:text-white">
+                No Ready Order
+              </h2>
+            </div>
+          )}
+          {isLoadingP && (
+            <div className="flex h-[150px] items-center justify-center xl:p-5">
+              <CircularProgress color="info" size="sm" variant="plain" />
+            </div>
+          )}
+        </div>
       </div>
       <div>
         {/* Order Detail Modal */}
