@@ -37,6 +37,7 @@ import PromosyonList from './pages/Admin/PromosyonPages/PromosyonList';
 import Printer from './pages/Admin/Printer/Printer';
 import ActiveOrders from './pages/Admin/OrderPages/ActiveOrders';
 import OrderRecords from './pages/Admin/Invoices/OrderRecords';
+import Invoices from './pages/Admin/Invoices/Invoices';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
@@ -88,6 +89,10 @@ function App() {
         <Route
           path="/payment/order-records"
           element={<GuardedRoute component={OrderRecords} />}
+        />
+        <Route
+          path="/payment/invoices"
+          element={<GuardedRoute component={Invoices} />}
         />
 
         <Route

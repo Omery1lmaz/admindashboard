@@ -38,7 +38,6 @@ const OrderRecords = () => {
       $lte: endOfDay,
     },
   });
-
   const handle = (order: any) => {
     // İki ayrı sheet için verileri çalışma sayfalarına dönüştürün
     console.log(order, 'order');
@@ -98,8 +97,6 @@ const OrderRecords = () => {
       ['Toplam Hakediş', 'Toplam Tutar', 'Toplam komisyon'],
       [totalVested, totalOrderAmount, totalCommission],
     ];
-    console.log(text, 'text');
-    console.log(test1, 'test');
     const ws1 = XLSX.utils.aoa_to_sheet(text);
     const ws2 = XLSX.utils.aoa_to_sheet(text2);
 
@@ -113,7 +110,6 @@ const OrderRecords = () => {
     // Dosyayı yazın ve indirin
     XLSX.writeFile(wb, 'myexcel.xlsx');
   };
-
   const filterDateHandle = (e: any) => {
     const newStartDate = new Date(e.target.value);
     setFilter((prevFilter) => ({
@@ -144,10 +140,6 @@ const OrderRecords = () => {
       })
     );
   };
-
-  useEffect(() => {
-    getOrders();
-  }, [filter]);
 
   useEffect(() => {
     let tAmount = 0;

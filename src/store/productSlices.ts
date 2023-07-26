@@ -530,6 +530,26 @@ export const getOrderRecords = createAsyncThunk(
     }
   }
 );
+export const getInvoicesRecords = createAsyncThunk(
+  '/getInvoicesRecords',
+  async ({ query }: any, thunkAPI) => {
+    try {
+      const res = await productService.getInvoicesRecords({
+        query,
+      });
+      return res;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const addProduct = createAsyncThunk(
   '/addProduct',
@@ -603,6 +623,7 @@ interface InitialState {
   messageP: string;
   products: any[];
   orders: any[];
+  invoices: any[];
   confirmedOrders: any[];
   preparedOrders: any[];
   readyOrders: any[];
@@ -626,6 +647,7 @@ const initialState: InitialState = {
   confirmedOrders: [],
   preparedOrders: [],
   orderRecords: [],
+  invoices: [],
   readyOrders: [],
   order: {},
   product: {},
@@ -688,6 +710,20 @@ const productSlice = createSlice({
       .addCase(updateProductsImage.pending, (state, action) => {
         state.isLoadingP = true;
       })
+      .addCase(getInvoicesRecords.fulfilled, (state, action) => {
+        state.isLoadingP = false;
+        state.invoices = action.payload.invoices;
+      })
+      .addCase(getInvoicesRecords.rejected, (state, action) => {
+        state.isErrorP = true;
+        state.isSuccessP = false;
+        state.isLoadingP = false;
+        state.messageP = action.payload as any;
+      })
+      .addCase(getInvoicesRecords.pending, (state, action) => {
+        state.isLoadingP = true;
+      })
+
       .addCase(getOrderBySellerWithLimit.fulfilled, (state, action) => {
         const v = action.payload;
         const preparedOrders = v.filter((order: any) => {
