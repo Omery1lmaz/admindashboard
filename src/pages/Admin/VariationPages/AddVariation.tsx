@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import Breadcrumb from '../../../components/Breadcrumb';
 import Multiselect from 'multiselect-react-dropdown';
-import { Formik } from 'formik';
+import { Formik, ErrorMessage } from 'formik';
 
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,12 +39,25 @@ const style = {
   px: 4,
   pb: 3,
 };
+const inputListSchema = Yup.array().of(
+  Yup.object().shape({
+    name: Yup.string().required('Product name is required'),
+    price: Yup.number()
+      .typeError('Price must be a number')
+      .min(0, 'Price must be greater than or equal to 0')
+      .required('Price is required'),
+    isSelected: Yup.boolean().required('Selected status is required'),
+  })
+);
 
 const AddVarition = () => {
   const dispatch = useDispatch();
   const [maxValue, setMaxValue] = useState(1);
   const [errorMessage, setErrorMessage] = useState();
   const [inputList, setinputList] = useState([]);
+  useEffect(() => {
+    console.log(inputList);
+  }, [inputList]);
 
   const handleinputchange = (e: any, index: any) => {
     const { name, value } = e.target;
@@ -87,10 +100,6 @@ const AddVarition = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(errorMessage);
-  }, [errorMessage]);
-
   const handleremove = (index) => {
     const list = [...inputList];
     list.splice(index, 1);
@@ -109,6 +118,7 @@ const AddVarition = () => {
       .positive()
       .integer()
       .required('Max Value is required'),
+    products: inputListSchema,
   });
 
   const ButtonHandleSubmit = (e: any) => {
@@ -124,6 +134,7 @@ const AddVarition = () => {
             Name: '',
             Zorunlu: false,
             MaxValue: 1,
+            producucts: [],
           }}
           validationSchema={validate}
           onSubmit={(values, { resetForm }) => {
@@ -231,14 +242,21 @@ const AddVarition = () => {
                                       Promotion Product {i + 1}
                                     </label>
                                     <input
+                                      name={`inputList.${i}.name`}
                                       type="text"
-                                      name="name"
                                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                                      placeholder="Enter First Name"
-                                      onChange={(e) => handleinputchange(e, i)}
-                                      value={inputList[i].name}
+                                      placeholder="Enter Product Name"
+                                      value={formik.values.inputList[i].name}
+                                      onChange={formik.handleChange}
+                                      onBlur={formik.handleBlur}
                                     />
                                   </div>
+                                  <ErrorMessage
+                                    name={`inputList.${i}.name`}
+                                    component="div"
+                                    className="error"
+                                  />
+
                                   <div className="form-group col-md-4">
                                     <label>Price</label>
                                     <input
@@ -278,7 +296,13 @@ const AddVarition = () => {
                             <button
                               type="button"
                               className="flex w-32 justify-center rounded bg-meta-3 px-3 py-1 font-medium text-gray"
-                              onClick={handleaddclick}
+                              onClick={(e: any) => {
+                                handleaddclick(e);
+                                formik.setFieldValue('products', [
+                                  ...formik.values.products,
+                                  { name: '', price: '', isSelected: false },
+                                ]);
+                              }}
                             >
                               Add More
                             </button>

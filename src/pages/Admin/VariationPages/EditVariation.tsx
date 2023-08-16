@@ -1,43 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DefaultLayout from '../../../layout/DefaultLayout';
 import Breadcrumb from '../../../components/Breadcrumb';
-import Multiselect from 'multiselect-react-dropdown';
 import { Formik } from 'formik';
 
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import { Typography } from '@mui/material';
-import {
-  addProduct,
-  getCatsBySeller,
-  getProductsById,
-  updateProductsImage,
-  updateProduct,
-} from '../../../store/productSlices';
 import {
   getPromotionsById,
-  getPromotionsBySeller,
   updatePromotionById,
 } from '../../../store/promotionSlices';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Select } from '@mui/material';
-import { infoNotification } from '../../../services/notificationHelper';
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 600,
-  height: 400,
-  bgcolor: 'background.paper',
-  borderRadius: '15px',
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
+import { useParams } from 'react-router-dom';
 
 const EditVariation = () => {
   const { id } = useParams();
@@ -50,8 +22,8 @@ const EditVariation = () => {
     dispatch(getPromotionsById(id));
   }, []);
   const [maxValue, setMaxValue] = useState(1);
-  const [errorMessage, setErrorMessage] = useState();
-  const [inputList, setinputList] = useState([]);
+  const [errorMessage, setErrorMessage] = useState<any>();
+  const [inputList, setinputList] = useState<any>([]);
   const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
@@ -66,15 +38,14 @@ const EditVariation = () => {
       }
     }
   }, [promotion]);
-
   const handleinputchange = (e: any, index: any) => {
     const { name, value } = e.target;
     if (name === 'isSelected') {
       let counter = 0;
-      const newList = inputList.map((item, i) => {
+      const newList: any = inputList.map((item: any, i: number) => {
         if (i === index) {
           // Seçili ürünü güncelle
-          const updatedItem = { ...item, [name]: value };
+          const updatedItem: any = { ...item, [name]: value };
           if (value === 'true') {
             counter++;
           }
@@ -95,7 +66,7 @@ const EditVariation = () => {
         setinputList(newList);
       }
     } else {
-      const newList = inputList.map((item, i) => {
+      const newList: any = inputList.map((item: any, i: number) => {
         if (i === index) {
           // Değiştirilmek istenen özelliği güncelle
           return { ...item, [name]: value };
@@ -108,10 +79,6 @@ const EditVariation = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(errorMessage);
-  }, [errorMessage]);
-
   const handleremove = (index: number) => {
     const list = [...inputList];
     list.splice(index, 1);
@@ -119,7 +86,6 @@ const EditVariation = () => {
   };
 
   const handleaddclick = () => {
-    // @ts-expect-error
     setinputList([...inputList, { name: '', price: 0, isSelected: false }]);
   };
 
@@ -138,25 +104,31 @@ const EditVariation = () => {
     e.preventDefault();
   };
   useEffect(() => {
-    console.log(promotion[0]);
+    if (promotion && promotion.variation && promotion.variation.name) {
+      setinputList(promotion.variation.products);
+      console.log(promotion.variation, 'inputlist');
+    }
   }, [promotion]);
+  // useEffect(() => {
+  //   console.log(inputList);
+  // }, [inputList]);
 
   return (
     <>
       <DefaultLayout>
         <Breadcrumb pageName="Edit Variation" />
-        {!promotion[0] && <h3>No Promotion</h3>}
-        {promotion[0] && promotion[0].variation && (
+        {!promotion && !promotion.variation && <h3>No Promotion</h3>}
+        {promotion && promotion.variation && (
           <Formik
             initialValues={{
-              Name: promotion[0].variation.name,
-              Zorunlu: promotion[0].variation.iscompulsory,
-              MaxValue: promotion[0].variation.maxValue,
+              Name: promotion.variation.name,
+              Zorunlu: promotion.variation.iscompulsory,
+              MaxValue: promotion.variation.maxValue,
+              products: inputList,
             }}
             validationSchema={validate}
-            onSubmit={(values, { resetForm }) => {
-              console.log('test');
-              const { Name, Multiple, Zorunlu, MaxValue } = values;
+            onSubmit={(values) => {
+              const { Name, Zorunlu, MaxValue } = values;
               const variation = {
                 name: Name,
                 iscompulsory: Zorunlu,
@@ -178,7 +150,6 @@ const EditVariation = () => {
                 </div>
 
                 {formik.errors.MaxValue && <div>{formik.errors.MaxValue}</div>}
-                {formik.errors.Multiple && <div>{formik.errors.Multiple}</div>}
                 {formik.errors.Name && <div>{formik.errors.Name}</div>}
                 {formik.errors.Zorunlu && <div>{formik.errors.Zorunlu}</div>}
                 <div className="p-6.5">
@@ -213,7 +184,7 @@ const EditVariation = () => {
                                 </div>
                               ) : null}
                               <div className="form-group mb-3">
-                                <label for="Name">Max Value</label>
+                                <label htmlFor="Name">Max Value</label>
                                 <input
                                   id="MaxValue"
                                   name="MaxValue"
@@ -221,7 +192,7 @@ const EditVariation = () => {
                                   className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                   required
                                   value={formik.values.MaxValue}
-                                  onChange={(e) => {
+                                  onChange={(e: any) => {
                                     formik.handleChange(e);
                                     setMaxValue(e.target.value);
                                   }}
@@ -230,11 +201,11 @@ const EditVariation = () => {
                               </div>
                               {formik.errors.Name && formik.touched.Name ? (
                                 <div className="error">
-                                  * {formik.errors.Name}
+                                  * {formik.errors.Name as string}
                                 </div>
                               ) : null}
                               <div className="form-group mb-3">
-                                <label for="Name">Zorunlu</label>
+                                <label htmlFor="Name">Zorunlu</label>
                                 <input
                                   id="Zorunlu"
                                   name="Zorunlu"
@@ -252,7 +223,7 @@ const EditVariation = () => {
                               ) : null}
                             </div>
                             <div className="row mb-3">
-                              {inputList.map((x, i) => {
+                              {inputList.map((x: any, i: number) => {
                                 return (
                                   <div className="row mb-3">
                                     <div className="w-full xl:w-1/2">
@@ -264,7 +235,7 @@ const EditVariation = () => {
                                         name="name"
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                                         placeholder="Enter First Name"
-                                        onChange={(e) =>
+                                        onChange={(e: any) =>
                                           handleinputchange(e, i)
                                         }
                                         value={inputList[i].name}

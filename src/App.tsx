@@ -27,7 +27,6 @@ import { ToastContainer } from 'react-toastify';
 import { socket } from './services/socketHelper';
 import { successNotification } from './services/notificationHelper';
 import { useDispatch, useSelector } from 'react-redux';
-import EditVariation from './pages/Admin/VariationPages/EditVariation';
 import VariationList from './pages/Admin/VariationPages/VariationList';
 import AddVarition from './pages/Admin/VariationPages/AddVariation';
 import { addOrder } from './store/productSlices';
@@ -38,6 +37,9 @@ import Printer from './pages/Admin/Printer/Printer';
 import ActiveOrders from './pages/Admin/OrderPages/ActiveOrders';
 import OrderRecords from './pages/Admin/Invoices/OrderRecords';
 import Invoices from './pages/Admin/Invoices/Invoices';
+import NewOptionList from './pages/Admin/VariationPages/NewOptionPages/VariationList';
+import NewAddOption from './pages/Admin/VariationPages/NewOptionPages/AddVariation';
+import EditOption from './pages/Admin/VariationPages/NewOptionPages/EditOption';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
@@ -185,15 +187,15 @@ function App() {
         />
         <Route
           path="/edit-promotion/:id"
-          element={<GuardedRoute component={EditVariation} />}
+          element={<GuardedRoute component={EditOption} />}
         />
         <Route
           path="/promotion-list"
-          element={<GuardedRoute component={VariationList} />}
+          element={<GuardedRoute component={NewOptionList} />}
         />
         <Route
           path="/add-promotion"
-          element={<GuardedRoute component={AddVarition} />}
+          element={<GuardedRoute component={NewAddOption} />}
         />
 
         <Route path="/calendar" element={<Calendar />} />

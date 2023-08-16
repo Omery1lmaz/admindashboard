@@ -17,24 +17,56 @@ axiosInstance.interceptors.request.use(function (config) {
   return config;
 });
 const getPromotionsBySeller = async () => {
-  const response = await axiosInstance.get(`https://startup-service.onrender.com/api/variations/`, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.get(
+    `http://localhost:4000/api/variations/`,
+    {
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 const addPromotion = async ({ variation }: any) => {
   const response = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/variations/`,
+    `http://localhost:4000/api/variations/`,
     { variation },
     { withCredentials: true }
   );
   return response.data;
 };
 
-const getPromotionById = async (id: string) => {
-  console.log('get promotion by id');
+const insertOptionHelper = async ({ option }: any) => {
+  const response = await axiosInstance.post(
+    `http://localhost:4000/api/options/`,
+    { option }
+  );
+  return response.data;
+};
+const putOptionHelper = async ({ option, id }: any) => {
+  const response = await axiosInstance.put(
+    `http://localhost:4000/api/options/${id}`,
+    { option }
+  );
+  return response.data;
+};
+
+const getOptionBySellerHelper = async ({ id }: any) => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/variations/${id}`,
+    `http://localhost:4000/api/options/${id}`
+  );
+  return response.data;
+};
+
+const getOptionsBySellerHelper = async () => {
+  console.log('when user refresh page');
+  const response = await axiosInstance.get(
+    `http://localhost:4000/api/options/`
+  );
+  return response.data;
+};
+
+const getPromotionById = async (id: string) => {
+  const response = await axiosInstance.get(
+    `http://localhost:4000/api/variations/${id}`,
     {
       withCredentials: true,
     }
@@ -44,7 +76,7 @@ const getPromotionById = async (id: string) => {
 
 const updatePromotionById = async ({ variation, id }: any) => {
   const response = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/variations/${id}`,
+    `http://localhost:4000/api/variations/${id}`,
     {
       variation,
     },
@@ -57,7 +89,7 @@ const updatePromotionById = async ({ variation, id }: any) => {
 
 const deletePromotionById = async (id: any) => {
   const response = await axiosInstance.delete(
-    `https://startup-service.onrender.com/api/variations/${id}`,
+    `http://localhost:4000/api/variations/${id}`,
     {
       withCredentials: true,
     }
@@ -71,5 +103,9 @@ const promotionHelper = {
   getPromotionById,
   updatePromotionById,
   deletePromotionById,
+  insertOptionHelper,
+  getOptionsBySellerHelper,
+  getOptionBySellerHelper,
+  putOptionHelper,
 };
 export default promotionHelper;

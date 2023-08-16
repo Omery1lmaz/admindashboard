@@ -158,6 +158,11 @@ const Invoices = () => {
             <p className="font-medium">İşlemler</p>
           </div>
         </div>
+        {!isLoadingP && invoices.length == 0 && !invoices[0]?.invoiceNo && (
+          <div className="flex items-center justify-center p-5 text-lg font-semibold">
+            <h2>Fatura Yok</h2>
+          </div>
+        )}
         {!isLoadingP &&
           invoices?.map((invoice: any, key: number) => {
             const date = new Date(invoice.date).toISOString().split('T')[0];

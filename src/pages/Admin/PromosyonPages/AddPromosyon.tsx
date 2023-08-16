@@ -20,16 +20,26 @@ const AddPromosyon = () => {
   // };
 
   const validate = Yup.object({
-    name: Yup.string().required('Name is required'),
+    name: Yup.string()
+      .required('Name is required')
+      .min(3, 'Minumum üç harf içermelidir'),
     seller: Yup.boolean().required('Zorunlu is required'),
     price: Yup.number('Price harf içermemelidir')
       .min(1, 'Price 1 ya da daha yüksek olmalıdır')
       .positive()
       .required('Price Value is required'),
     lowestPrice: Yup.number('lowestPrice harf içermemelidir')
-      .min(1, 'lowestPrice 1 ya da daha yüksek olmalıdır')
+      .min(1, 'lowestPrice 1 or higher')
       .positive()
-      .required('lowestPrice Value is required'),
+      .required('lowestPrice Value is required')
+      .test(
+        'lowestPrice',
+        'lowestPrice must be smaller than highestPrice',
+        function (value) {
+          const { highestPrice } = this.parent;
+          return value < highestPrice;
+        }
+      ),
     highestPrice: Yup.number('highestPrice harf içermemelidir')
       .min(1, 'highestPrice 1 ya da daha yüksek olmalıdır')
       .positive()
@@ -41,12 +51,8 @@ const AddPromosyon = () => {
       .required('maximumUsageRights Value is required'),
     expirationDate: Yup.date()
       .required('Tarih ve saat alanı zorunludur')
-      .min(new Date(), 'Geçmiş bir tarih ve saat seçilemez'),
+      .min(new Date(Date.now()), 'Geçmiş bir tarih ve saat seçilemez'),
   });
-
-  const ButtonHandleSubmit = (e: any) => {
-    e.preventDefault();
-  };
 
   return (
     <>
@@ -207,18 +213,20 @@ const AddPromosyon = () => {
                                 Maximum Usage Rights
                               </label>
                               <Datetime
-                                className="w-full hover:cursor-pointer border-[1.5px] border-stroke bg-transparent focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary "
+                                className="w-full border-[1.5px] border-stroke bg-transparent hover:cursor-pointer focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary "
                                 onChange={(e: any) => {
-                                  console.log(e, 'e');
-                                  formik.setFieldValue('expirationDate', e);
+                                  formik.setFieldValue('expirationDate', e._d);
                                   console.log(formik.values.expirationDate);
+                                  formik.setFieldTouched(
+                                    formik.values.expirationDate
+                                  );
+                                  console.log(formik.errors.expirationDate);
                                 }}
                               />
                             </div>
-                            {formik.errors.maximumUsageRights &&
-                            formik.touched.maximumUsageRights ? (
+                            {formik.errors.expirationDate ? (
                               <div className="error">
-                                * {formik.errors.maximumUsageRights}
+                                * {formik.errors.expirationDate}
                               </div>
                             ) : null}
                           </div>

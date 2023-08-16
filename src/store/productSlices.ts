@@ -681,18 +681,36 @@ const productSlice = createSlice({
     },
     updateOrders(state: InitialState, action) {
       const v = action.payload;
-      console.log('najndfjnajf', v);
-      const preparedOrders = v.filter((order: any) => {
+      console.log(v._id, v.isReady);
+
+      // state.orders içinde güncellenmek istenen objenin indexini buluyoruz.
+      const d = state.orders.findIndex((i: any) => i._id === v._id);
+      console.log(d);
+
+      if (d !== -1) {
+        // state.orders dizisindeki ilgili objeyi kopyalıyoruz.
+        const updatedOrder = { ...state.orders[d], isReady: v.isReady };
+
+        // Kopyalanan objeyi state.orders dizisine yerleştiriyoruz.
+        state.orders[d] = updatedOrder;
+
+        // Eğer yapmak istediğiniz sadece bu güncelleme ise, aşağıdaki iki satırı yorumdan çıkarıp kullanabilirsiniz.
+        //const deepCopyOrders = [...state.orders];
+        //console.log(deepCopyOrders);
+      }
+      console.log(state.orders, 'state.orders');
+      const preparedOrders = state.orders.filter((order: any) => {
         return order.isReady == 'InProgress';
       });
-      const confirmedOrders = v.filter((order: any) => {
+      const confirmedOrders = state.orders.filter((order: any) => {
         return order.isReady == 'Not Approved';
       });
-      const readyOrders = v.filter((order: any) => {
-        return order.isReady == 'Not Approved';
+      const readyOrders = state.orders.filter((order: any) => {
+        return order.isReady == 'Ready';
       });
       state.preparedOrders = preparedOrders;
       state.confirmedOrders = confirmedOrders;
+      state.readyOrders = readyOrders;
     },
   },
 

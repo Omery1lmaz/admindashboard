@@ -227,9 +227,7 @@ const OrderRecords = () => {
         <CardOne
           title={'Toplam Hakediş'}
           price={`${
-            ((totalOrderAmount - totalCancelledOrderAmount) *
-              user?.commissionPercentage) /
-            100
+            totalOrderAmount - totalCancelledOrderAmount - totalCommission
           } TL`}
           icon={<BanknotesIcon />}
         />

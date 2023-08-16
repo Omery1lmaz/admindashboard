@@ -19,7 +19,85 @@ export const addPromotion = createAsyncThunk(
           error.response.data.message) ||
         error.message ||
         error.toString();
-      errorNotification(error.response.data);
+      errorNotification(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const insertOption = createAsyncThunk(
+  '/insertOption',
+  async ({ option }: any, thunkAPI) => {
+    try {
+      const response = await promotionService.insertOptionHelper({ option });
+      successNotification(response);
+      return response;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const putOption = createAsyncThunk(
+  '/putOption',
+  async ({ option, id }: any, thunkAPI) => {
+    try {
+      const response = await promotionService.putOptionHelper({ option, id });
+      successNotification(response);
+      return response;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getOptionBySeller = createAsyncThunk(
+  '/getOptionBySeller',
+  async ({ id }: any, thunkAPI) => {
+    try {
+      const response = await promotionService.getOptionBySellerHelper({ id });
+      successNotification(response);
+      return response;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(message);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const getOptionsBySeller = createAsyncThunk(
+  '/getOptionsBySeller',
+  async (thunkAPI: any) => {
+    try {
+      const response = await promotionService.getOptionsBySellerHelper();
+      successNotification(response);
+      return response;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(message);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -98,6 +176,8 @@ export const deletePromotionById = createAsyncThunk(
 
 export const initialState: any = {
   promotions: [],
+  options: [],
+  option: {},
   promotion: {},
   isLoading: false,
   isError: false,
@@ -105,11 +185,42 @@ export const initialState: any = {
 
 // Then, handle actions in your reducers:
 const promotionSlice = createSlice({
-  name: 'users',
+  name: 'promotion',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getOptionBySeller.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.option = action.payload.option;
+      })
+      .addCase(getOptionBySeller.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+      })
+      .addCase(getOptionBySeller.pending, (state, action) => {
+        state.isLoading = true;
+      })
+
+      .addCase(insertOption.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(insertOption.rejected, (state, action) => {
+        state.isError = true;
+      })
+      .addCase(insertOption.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getOptionsBySeller.fulfilled, (state, action) => {
+        state.options = action.payload.options;
+        state.isLoading = false;
+      })
+      .addCase(getOptionsBySeller.rejected, (state, action) => {
+        state.isError = true;
+      })
+      .addCase(getOptionsBySeller.pending, (state, action) => {
+        state.isLoading = true;
+      })
       .addCase(getPromotionsBySeller.fulfilled, (state, action) => {
         state.promotions = action.payload;
         state.isLoading = false;

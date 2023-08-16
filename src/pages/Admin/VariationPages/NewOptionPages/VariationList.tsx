@@ -1,115 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import DefaultLayout from '../../../layout/DefaultLayout';
-import Breadcrumb from '../../../components/Breadcrumb';
+import { useEffect, useState } from 'react';
+import DefaultLayout from '../../../../layout/DefaultLayout';
+import Breadcrumb from '../../../../components/Breadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from '@mui/material/Modal';
-import {
-  deleteCategoryById,
-  getCatsBySeller,
-} from '../../../store/productSlices';
 import { useNavigate, useParams } from 'react-router-dom';
-import CircularProgress from '@mui/joy/CircularProgress';
-import { Box, Typography } from '@mui/material';
-
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   deletePromotionById,
-  // getPromotionsBySeller,
-} from '../../../store/promotionSlices';
-import {
-  deletePromosyonById,
-  getPromosyonsBySeller,
-} from '../../../store/promosyonSlice';
+  getOptionsBySeller,
+} from '../../../../store/promotionSlices';
+import { CircularProgress } from '@mui/material';
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 600,
-  height: 400,
-  bgcolor: 'background.paper',
-  borderRadius: '15px',
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
-
-const PromosyonList = () => {
+const NewOptionList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { promosyons, isLoadingPr } = useSelector(
+
+  const { options, isLoading } = useSelector(
     // @ts-expect-error
-    (state) => state.promosyon
-  );
-  const { user } = useSelector(
-    // @ts-expect-error
-    (state) => state.auth
+    (state) => state.promotion
   );
 
   const [selectedPromotionId, setSelectedPromotionId] = useState();
 
   useEffect(() => {
-    // @ts-expect-errorgetPromotionsBySeller
-    dispatch(getPromosyonsBySeller());
+    console.log('get options by seller');
+    // @ts-expect-error
+    dispatch(getOptionsBySeller());
   }, []);
 
   const deletePromotion = () => {
     // @ts-expect-error
-    dispatch(deletePromosyonById(selectedPromotionId));
+    dispatch(deletePromotionById(selectedPromotionId));
   };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Promotion List" />
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-3 md:px-6 2xl:px-7.5">
+        <div className="grid grid-cols-2 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-2 md:px-6 2xl:px-7.5">
           <div className="col-span-1 flex items-center">
-            <p className="font-medium">Promotion Name</p>
-          </div>
-          <div className="col-span-1 flex items-center">
-            <p className="font-medium">Seller</p>
+            <p className="font-medium">Option</p>
           </div>
           <div className="col-span-1 flex items-center justify-center">
             <p className="font-medium">Actions</p>
           </div>
         </div>
 
-        {!isLoadingPr &&
-          promosyons?.map((promotion: any, key: number) => {
+        {!isLoading &&
+          options?.map((option: any, key: number) => {
             return (
               <div
                 key={key}
-                className="grid grid-cols-3 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-3 md:px-6 2xl:px-7.5"
+                className="grid grid-cols-2 border-t border-stroke py-4.5 px-4 dark:border-strokedark sm:grid-cols-2 md:px-6 2xl:px-7.5"
               >
                 <div className="col-span-1 flex items-center">
                   <p className="max-w-[350px] truncate text-sm text-black dark:text-white sm:max-w-[100px]">
-                    {promotion.name}
-                  </p>
-                </div>
-                <div className="col-span-1 flex items-center">
-                  <p className="max-w-[350px] truncate text-sm text-black dark:text-white sm:max-w-[100px]">
-                    {promotion.seller[0] == user._id ? 'ME' : 'all'}
+                    {option.name}
                   </p>
                 </div>
                 <div className="col-span-1 flex items-center justify-center">
-                  {promotion.seller[0] == user._id ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <TrashIcon
-                        className="cursor-pointer hover:scale-110"
-                        width={16}
-                        onClick={() => {
-                          setSelectedPromotionId(promotion._id);
-                          handleOpen();
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}
+                  <div className="flex items-center justify-center gap-2">
+                    <PencilSquareIcon
+                      className="cursor-pointer hover:scale-110"
+                      width={16}
+                      onClick={() => navigate(`/edit-promotion/${option._id}`)}
+                    />
+                    <TrashIcon
+                      className="cursor-pointer hover:scale-110"
+                      width={16}
+                      onClick={() => {
+                        setSelectedPromotionId(option._id);
+                        handleOpen();
+                      }}
+                    />
+                  </div>
                   <Modal
                     open={open}
                     onClose={handleClose}
@@ -147,14 +113,14 @@ const PromosyonList = () => {
               </div>
             );
           })}
-        {promosyons?.length == 0 && !isLoadingPr && (
+        {options?.length == 0 && !isLoading && (
           <div className="flex h-[150px]  w-full items-center justify-center xl:p-5">
             <h2 className="text-center text-lg font-semibold text-black dark:text-white">
               No Promotion
             </h2>
           </div>
         )}
-        {isLoadingPr && (
+        {isLoading && (
           <div className="flex h-[150px] items-center justify-center xl:p-5">
             <CircularProgress color="info" size="sm" variant="plain" />
           </div>
@@ -164,4 +130,4 @@ const PromosyonList = () => {
   );
 };
 
-export default PromosyonList;
+export default NewOptionList;

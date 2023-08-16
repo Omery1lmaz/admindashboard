@@ -19,14 +19,14 @@ axiosInstance.interceptors.request.use(function (config) {
 
 const getCategoriesHelper = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/categories/categories'
+    'http://localhost:4000/api/categories/categories'
   );
 
   return response.data;
 };
 const getOrderBySeller = async () => {
   const response = await axiosInstance.get(
-    'https://startup-service.onrender.com/api/orders/order/seller',
+    'http://localhost:4000/api/orders/order/seller',
     { withCredentials: true }
   );
   const arrayfororders = [...response.data];
@@ -39,7 +39,7 @@ const getOrderBySeller = async () => {
 
 const getAdminDashboardInf = async ({ query }: any) => {
   const res = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/admin/adminDashboard',
+    'http://localhost:4000/api/admin/adminDashboard',
     { query: query },
     {
       withCredentials: true,
@@ -49,22 +49,21 @@ const getAdminDashboardInf = async ({ query }: any) => {
 };
 
 const UpdateOrderStatus = async ({ id, status }: any) => {
-  console.log(id, 'id');
   const response = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/orders/order/${id}`,
+    `http://localhost:4000/api/orders/order/${id}`,
     { status },
     { withCredentials: true }
   );
   return response.data;
 };
 const getOrderById = async ({ id }: any) => {
-  return axiosInstance.get(`https://startup-service.onrender.com/api/orders/order/${id}`, {
+  return axiosInstance.get(`http://localhost:4000/api/orders/order/${id}`, {
     withCredentials: true,
   });
 };
 
 const deleteOrder = async ({ id }: any) => {
-  return axiosInstance.delete(`https://startup-service.onrender.com/api/orders/order/${id}`, {
+  return axiosInstance.delete(`http://localhost:4000/api/orders/order/${id}`, {
     withCredentials: true,
   });
 };
@@ -82,7 +81,7 @@ const createOrder = async ({
   tip,
 }: any) => {
   const response: any = axiosInstance.post(
-    'https://startup-service.onrender.com/api/orders/order',
+    'http://localhost:4000/api/orders/order',
     {
       isTakeAway,
       totalPrice,
@@ -103,7 +102,7 @@ const createOrder = async ({
 
 const createTip = async ({ tip, id, seller }: any) => {
   const response: any = axiosInstance.post(
-    `https://startup-service.onrender.com/api/orders/order/tip/${id}`,
+    `http://localhost:4000/api/orders/order/tip/${id}`,
     {
       tip,
       seller,
@@ -115,7 +114,7 @@ const createTip = async ({ tip, id, seller }: any) => {
 
 const deleteCategoryById = async ({ id }: any) => {
   const response: any = await axiosInstance.delete(
-    `https://startup-service.onrender.com/api/categories/${id}`,
+    `http://localhost:4000/api/categories/${id}`,
     { withCredentials: true }
   );
 
@@ -124,7 +123,7 @@ const deleteCategoryById = async ({ id }: any) => {
 
 const getProduct = async ({ id }: any) => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/products/${id}`
+    `http://localhost:4000/api/products/${id}`
   );
 
   return response.data;
@@ -132,7 +131,7 @@ const getProduct = async ({ id }: any) => {
 
 const getCategoryByIdHelper = async ({ id }: any) => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/categories/${id}`,
+    `http://localhost:4000/api/categories/${id}`,
     { withCredentials: true }
   );
 
@@ -141,7 +140,7 @@ const getCategoryByIdHelper = async ({ id }: any) => {
 const updateProductsImage = async ({ id, formData }: any) => {
   const token = Cookies.get('token');
   const response: any = await axios.post(
-    `https://startup-service.onrender.com/api/products/image/${id}`,
+    `http://localhost:4000/api/products/image/${id}`,
     formData,
     {
       headers: {
@@ -156,7 +155,7 @@ const updateProductsImage = async ({ id, formData }: any) => {
 // const getCategoriesBySellerHelper = async ({ id, user }: any) => {
 const getCategoriesBySellerHelper = async () => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/categories/categories/seller`,
+    `http://localhost:4000/api/categories/categories/seller`,
     { withCredentials: true }
   );
   return response.data;
@@ -164,14 +163,14 @@ const getCategoriesBySellerHelper = async () => {
 
 const getCategoriesBySellerIdHelper = async (id: any) => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/categories/categories/${id}`
+    `http://localhost:4000/api/categories/categories/${id}`
   );
   return response.data;
 };
 
 const getPromotionsBySeller = async () => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/promotions/`,
+    `http://localhost:4000/api/promotions/`,
     {
       withCredentials: true,
     }
@@ -181,7 +180,7 @@ const getPromotionsBySeller = async () => {
 
 const addCategoriesHelper = async (category: any) => {
   const response: any = await axiosInstance.post(
-    'https://startup-service.onrender.com/api/categories/add-categories',
+    'http://localhost:4000/api/categories/add-categories',
     category,
     { withCredentials: true }
   );
@@ -193,7 +192,7 @@ const addCategoriesHelper = async (category: any) => {
 // @Private
 const updateCategory = async ({ category, id }: any) => {
   const response: any = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/categories/categories/${id}`,
+    `http://localhost:4000/api/categories/categories/${id}`,
     category,
     { withCredentials: true }
   );
@@ -203,7 +202,7 @@ const updateCategory = async ({ category, id }: any) => {
 const addProduct = async ({ product, formData }: any) => {
   const token = Cookies.get('token');
   const response: any = await axios.post(
-    'https://startup-service.onrender.com/api/products/',
+    'http://localhost:4000/api/products/',
     formData,
     {
       headers: {
@@ -219,7 +218,7 @@ const addProduct = async ({ product, formData }: any) => {
 // @Private
 const updateProduct = async ({ product, productId }: any) => {
   const response: any = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/products/${productId}`,
+    `http://localhost:4000/api/products/${productId}`,
     product,
     { withCredentials: true }
   );
@@ -228,7 +227,7 @@ const updateProduct = async ({ product, productId }: any) => {
 
 const updateProductP = async ({ product, productId }: any) => {
   const response: any = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/products/p/${productId}`,
+    `http://localhost:4000/api/products/p/${productId}`,
     { product },
     { withCredentials: true }
   );
@@ -239,7 +238,7 @@ const updateProductP = async ({ product, productId }: any) => {
 
 const getProductsByIdHelper = async (id: any) => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/products/${id}`
+    `http://localhost:4000/api/products/${id}`
   );
   return response.data;
 };
@@ -248,14 +247,14 @@ const getProductsByIdHelper = async (id: any) => {
 
 const getProductsBySeller = async (id: any) => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/products/seller/${id}`
+    `http://localhost:4000/api/products/seller/${id}`
   );
   return response.data;
 };
 
 const getProductsBySellerWithLimit = async ({ skip, limit }: any) => {
   const response: any = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/products/seller/limit/${limit}/${skip}`,
+    `http://localhost:4000/api/products/seller/limit/${limit}/${skip}`,
     { withCredentials: true }
   );
   return response.data;
@@ -263,7 +262,7 @@ const getProductsBySellerWithLimit = async ({ skip, limit }: any) => {
 
 const getOrderBySellerWithLimit = async ({ skip, limit, query }: any) => {
   const response: any = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/orders/order/seller/limit/${limit}/${skip}`,
+    `http://localhost:4000/api/orders/order/seller/limit/${limit}/${skip}`,
     { query },
     { withCredentials: true }
   );
@@ -271,7 +270,7 @@ const getOrderBySellerWithLimit = async ({ skip, limit, query }: any) => {
 };
 const getOrderRecords = async ({ skip, limit, query }: any) => {
   const response: any = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/orders/order/seller/finance`,
+    `http://localhost:4000/api/orders/order/seller/finance`,
     { query },
     { withCredentials: true }
   );
@@ -279,7 +278,7 @@ const getOrderRecords = async ({ skip, limit, query }: any) => {
 };
 const getInvoicesRecords = async ({ query }: any) => {
   const response: any = await axiosInstance.put(
-    `https://startup-service.onrender.com/api/admin/invoice`,
+    `http://localhost:4000/api/admin/invoice`,
     { query },
     { withCredentials: true }
   );
@@ -288,14 +287,14 @@ const getInvoicesRecords = async ({ query }: any) => {
 
 const getCatsHelper = async () => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/categories/categories/seller`,
+    `http://localhost:4000/api/categories/categories/seller`,
     { withCredentials: true }
   );
   return response.data;
 };
 const deleteProductById = async ({ id, user }: any) => {
   const response = await axiosInstance.delete(
-    `https://startup-service.onrender.com/api/products/${id}`,
+    `http://localhost:4000/api/products/${id}`,
     { withCredentials: true }
   );
 

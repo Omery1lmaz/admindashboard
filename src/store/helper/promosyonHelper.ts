@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(function (config) {
 
 const getPromosyonsBySeller = async () => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/promotion/seller`,
+    `http://localhost:4000/api/promotion/seller`,
     {
       withCredentials: true,
     }
@@ -28,7 +28,7 @@ const getPromosyonsBySeller = async () => {
 };
 const addPromotion = async ({ promotion }: any) => {
   const response = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/promotion/`,
+    `http://localhost:4000/api/promotion/`,
     { promotion },
     { withCredentials: true }
   );
@@ -37,7 +37,7 @@ const addPromotion = async ({ promotion }: any) => {
 
 const getPromotionById = async (id: string) => {
   const response = await axiosInstance.get(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+    `http://localhost:4000/api/promotion/${id}`,
     {
       withCredentials: true,
     }
@@ -47,7 +47,7 @@ const getPromotionById = async (id: string) => {
 
 const updatePromotionById = async ({ promotion, id }: any) => {
   const response = await axiosInstance.post(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+    `http://localhost:4000/api/promotion/${id}`,
     {
       promotion,
     },
@@ -60,7 +60,7 @@ const updatePromotionById = async ({ promotion, id }: any) => {
 
 const deletePromotionById = async (id: any) => {
   const response = await axiosInstance.delete(
-    `https://startup-service.onrender.com/api/promotion/${id}`,
+    `http://localhost:4000/api/promotion/${id}`,
     {
       withCredentials: true,
     }

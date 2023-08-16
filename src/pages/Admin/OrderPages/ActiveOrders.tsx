@@ -13,6 +13,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Box, Typography } from '@mui/material';
 
+const cancelOrderReasons = [
+  {
+    label: 'Yoğunluk',
+    text: 'Satıcı yoğunluğu yüzden sipariş iptal oldu',
+  },
+  {
+    label: 'Ürün Yok',
+    text: 'Satıcı stoğunda ürün bulunmuyor',
+  },
+];
 interface Item {
   name: string;
   qty: number;
@@ -85,8 +95,10 @@ const ActiveOrders = () => {
   const { page } = useParams();
   const [open, setOpen] = useState(false);
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
+  const [cancelOrderOpen, setCancelOrderOpen] = useState(true);
   const [vOrders, setVOrders] = useState<[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [cancelReason, setCancelOrderReason] = useState<string>('');
   const [filter, setFilter] = useState({
     isReady: { $ne: 'Delivered' },
   });
@@ -95,11 +107,38 @@ const ActiveOrders = () => {
   const handleOpen = () => setOpen(true);
   const handleOpenFilter = () => setFilterOpen(true);
   const handleClose = () => setOpen(false);
+  const handlecancelOrderOpenClose = () => setCancelOrderOpen(false);
   const handleCloseODetailModal = () => setOpenOrderDetailModal(false);
   const handleOpenODetailModal = () => setOpenOrderDetailModal(true);
   const handleCloseFilter = () => setFilterOpen(false);
   const [activePage, setActivePage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [currentTime, setCurrentTime] = useState(moment());
+  const [currentTimeDate, setCurrentTimeDate] = useState(new Date());
+
+  useEffect(() => {
+    // Her saniyede bir zamanı güncelleyecek bir interval oluşturuyoruz.
+    const interval = setInterval(() => {
+      setCurrentTime(moment());
+    }, 10000);
+
+    // Komponent çöktüğünde interval'i temizliyoruz.
+    return () => clearInterval(interval);
+  }, []); // Boş dizi, etkileşimliği yalnızca bir kere başlatmak için kullanılır.
+  const timeFromNow = (order: any) => {
+    console.log('timeFromNow', currentTimeDate.getUTCHours());
+    const timeDifference = new Date(order.date).getTime() - currentTimeDate;
+    const minutes = Math.abs(Math.floor(timeDifference / (1000 * 60)));
+    const seconds = Math.abs(Math.floor((timeDifference % (1000 * 60)) / 1000));
+    if (Math.abs(minutes) >= 7 && order.isReady === 'Not Approved') {
+      console.log(
+        'Sipariş 7 dakika içinde onaylanmadı, sipariş iptal edilecek.'
+      );
+      cancelOrderCauseOfSellerDidnotApprove(order._id);
+    }
+
+    return `${minutes} dakika ${seconds} saniye`;
+  };
 
   let { orders, confirmedOrders, preparedOrders, isLoadingP, readyOrders } =
     useSelector((state: any) => state.product);
@@ -118,6 +157,10 @@ const ActiveOrders = () => {
   useEffect(() => {
     getOrders();
   }, []);
+  const cancelOrderCauseOfSellerDidnotApprove = (orderId: string) => {
+    //@ts-expect-error
+    dispatch(updateOrderStatus({ id: orderId, status: 'Cancel' }));
+  };
   const handleupdateStatusOrder = (status: any) => {
     if (selectedOrder) {
       const index = orders.findIndex(
@@ -126,9 +169,8 @@ const ActiveOrders = () => {
       );
       console.log(index);
       let copyOrders = [...orders];
-      let copyV = orders[index];
+      let copyV: any = orders[index];
       copyV = { ...copyV, isReady: status };
-      console.log(copyV);
       copyOrders[index] = copyV;
       orders = [...copyOrders];
       setOrders();
@@ -149,7 +191,10 @@ const ActiveOrders = () => {
           <h2 className="text-lg">Confirmed Orders</h2>
           <table className="w-full table-auto">
             <thead>
-              <tr className="bg-gray-2 text-left dark:bg-meta-4">
+              <tr
+                key={'confirmed'}
+                className="bg-gray-2 text-left dark:bg-meta-4"
+              >
                 <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
                   Date
                 </th>
@@ -172,7 +217,7 @@ const ActiveOrders = () => {
             </thead>
             <tbody>
               {!isLoadingP &&
-                confirmedOrders?.map((order: any, index: number) => {
+                confirmedOrders?.map((order: Order, index: number) => {
                   let date = new Date(order.date);
 
                   let day = date.getDate(); // gün
@@ -195,7 +240,7 @@ const ActiveOrders = () => {
                     second;
 
                   return (
-                    <tr>
+                    <tr key={`confirmed-${order._id}`}>
                       <td
                         key={index}
                         className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11"
@@ -218,8 +263,8 @@ const ActiveOrders = () => {
                         Paid
                       </p> */}
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                        {moment(order.date).fromNow()}
+                      <td className="border-b  border-[#eee] py-5 px-4 dark:border-strokedark">
+                        {timeFromNow(order)}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         {order.isReady}
@@ -239,6 +284,14 @@ const ActiveOrders = () => {
                           className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-gray p-2 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
                         >
                           Onayla
+                        </button>
+                        <button
+                          onClick={() => {
+                            setCancelOrderOpen(true);
+                          }}
+                          className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50"
+                        >
+                          İptal Et
                         </button>
                         <button
                           onClick={() => {
@@ -345,7 +398,7 @@ const ActiveOrders = () => {
                       </p> */}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                        {moment(order.date).fromNow()}
+                        c{' '}
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         {order.isReady}
@@ -662,6 +715,47 @@ const ActiveOrders = () => {
           </Modal>
         </div>
         {/* Order Detail Modal End */}
+        {/* Cancel Order Modal Start */}
+        <div>
+          <Modal
+            open={cancelOrderOpen}
+            onClose={handlecancelOrderOpenClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div className="bg-gray-800 absolute left-2/4 top-2/4 h-45 w-2/4 translate-x-[-50%] translate-y-[-50%] rounded bg-graydark p-4 text-white">
+              <h3 className="text-lg font-medium">Cancel Order</h3>
+              <hr className="my-3"></hr>
+              <div className="flex items-center justify-between p-5">
+                <div className="flex items-center justify-start gap-2">
+                  <label>Sipariş İptal Nedeni</label>
+                  <select
+                    className="rounded-lg bg-black p-4"
+                    onChange={(e: any) => {
+                      console.log(e.target.value);
+                      setCancelOrderReason(e.target.value);
+                    }}
+                  >
+                    <option selected disabled>
+                      Bir neden seçiniz
+                    </option>
+                    {cancelOrderReasons.map((reason: any) => {
+                      return (
+                        <option value={reason.text}>{reason.label}</option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div>
+                  <button className="z-99 flex items-center justify-center rounded-lg border border-stroke bg-meta-1 p-2 hover:bg-opacity-50 dark:border-strokedark  dark:hover:bg-opacity-50">
+                    Siparişi İptal Et
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        </div>
+        {/* Cancel Order Modal End */}
       </div>
     </DefaultLayout>
   );

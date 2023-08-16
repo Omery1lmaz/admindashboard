@@ -127,7 +127,7 @@ const WaiterList = () => {
         {waiters?.length == 0 && !isLoadingW && (
           <div className="flex h-[150px]  w-full items-center justify-center xl:p-5">
             <h2 className="text-center text-lg font-semibold text-black dark:text-white">
-              No Category
+              No Waiter
             </h2>
           </div>
         )}
