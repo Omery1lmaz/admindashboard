@@ -13,7 +13,7 @@ let axiosInstance = axios.create(defaultOptions);
 // Set the AUTH token for any request
 axiosInstance.interceptors.request.use(function (config) {
   const token = Cookies.get('token');
-  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  config.headers.Authorizgetation = token ? `Bearer ${token}` : '';
   return config;
 });
 
@@ -200,19 +200,33 @@ const updateCategory = async ({ category, id }: any) => {
 };
 
 const addProduct = async ({ product, formData }: any) => {
-  const token = Cookies.get('token');
-  const response: any = await axios.post(
-    'http://localhost:4000/api/products/',
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data;
+  // const response: any = await axios.post(
+  //   'http://localhost:4000/api/products/',
+  //   formData,
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   }
+  // );
+  // return response.data;
 };
 
+const newAddProduct = async ({ formData }: any) => {
+  // for (var key of formData.entries()) {
+  //   console.log(JSON.stringify(key[0]) + ', ' + JSON.stringify(key[1]));
+  // }
+  // const token = Cookies.get('token');
+  // const response: any = await axios.post(
+  //   'http://localhost:4000/api/new-product/',
+  //   formData, {
+  //     headers: {
+  //       Authorization: token ? `Bearer ${token}` : '';
+  //     }
+  //   }
+  // );
+  // return response.data;
+};
 // @Post
 // @Update Product
 // @Private
@@ -330,5 +344,6 @@ const productService = {
   updateProductP,
   getOrderRecords,
   getInvoicesRecords,
+  newAddProduct,
 };
 export default productService;

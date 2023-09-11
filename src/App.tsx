@@ -40,6 +40,7 @@ import Invoices from './pages/Admin/Invoices/Invoices';
 import NewOptionList from './pages/Admin/VariationPages/NewOptionPages/VariationList';
 import NewAddOption from './pages/Admin/VariationPages/NewOptionPages/AddVariation';
 import EditOption from './pages/Admin/VariationPages/NewOptionPages/EditOption';
+import NewAddProduct from './pages/Admin/ProductPages/NewProductPages/AddProduct';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
@@ -99,7 +100,7 @@ function App() {
 
         <Route
           path="/add-product"
-          element={<GuardedRoute component={AddProduct} />}
+          element={<GuardedRoute component={NewAddProduct} />}
         />
         <Route
           path="/active-orders"

@@ -38,7 +38,7 @@ const EditOption = () => {
         ) : (
           <>
             {!isLoading && !option?.name && (
-              <div className="flex items-center justify-center rounded-sm border p-12 border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="flex items-center justify-center rounded-sm border border-stroke bg-white p-12 shadow-default dark:border-strokedark dark:bg-boxdark">
                 <h5>There is No Option</h5>
               </div>
             )}

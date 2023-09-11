@@ -466,7 +466,7 @@ export const getProductsBySeller = createAsyncThunk(
 
 export const getProductsBySellerLimit = createAsyncThunk(
   '/getProductsBySellerLimit',
-  async ({ skip, limit }: any, thunkAPI) => {
+  async ({ skip = 0, limit = 99999 }: any, thunkAPI) => {
     console.log(skip, 'skip');
     const v = skip == 1 ? 0 : skip * 10 - 10;
     try {
@@ -556,6 +556,24 @@ export const addProduct = createAsyncThunk(
   async ({ product, formData }: any, thunkAPI) => {
     try {
       const v = await productService.addProduct({ product, formData });
+      successNotification('Product başarıyla güncellendi');
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      errorNotification(error.response.data);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const newAddProduct = createAsyncThunk(
+  '/newAddProduct',
+  async ({ formData }: any, thunkAPI) => {
+    try {
+      const v = await productService.newAddProduct({ formData });
       successNotification('Product başarıyla güncellendi');
     } catch (error: any) {
       const message =
